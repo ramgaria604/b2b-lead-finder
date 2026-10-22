@@ -266,8 +266,6 @@ function generateUniversalHighDensityLeads(category, city, country, count, start
 
   const extra = [];
   for (let i = 1; i <= count; i++) {
-    const pList = isRealEstate ? realEstatePrefixes : genericPrefixes;
-    const sList = isRealEstate ? realEstateSuffixes : genericSuffixes;
     const prefix = pList[(i + startIdx) % pList.length];
     const suffix = sList[((i * 3) + startIdx) % sList.length];
 
