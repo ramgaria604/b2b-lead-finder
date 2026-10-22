@@ -224,15 +224,35 @@ async function fetchDeepRealBusinesses(category, city) {
   return uniqueLeads;
 }
 
-// Universal Omni-Category High-Status Generator (Real Estate, Advisors, Any Category)
+// Universal Omni-Category High-Status Generator (Tailored for Real Estate, Legal, Solar, MedSpas, Logistics, etc.)
 function generateUniversalHighDensityLeads(category, city, country, count, startIdx) {
-  const isRealEstate = /real\s*estate|property|realtor|broker|agent|advisor|wealth/i.test(category);
+  const catLower = category.toLowerCase();
   
-  const realEstatePrefixes = ['Prestige', 'Apex Luxury', 'Prime Capital', 'Signature', 'Vanguard', 'Sotheby', 'First Choice', 'Imperial', 'Horizon', 'Golden Key', 'Metropolitan', 'Compass', 'Crown', 'Elite Global', 'Summit'];
-  const realEstateSuffixes = ['Realty Group', 'Real Estate Advisors', 'Property Partners', 'Luxury Estates', 'Asset Advisors', 'Real Estate Brokerage', 'Homes & Living', 'Investments', 'Commercial Realty', 'Associates'];
+  const isRealEstate = /real\s*estate|property|realtor|broker|agent|advisor|wealth/i.test(catLower);
+  const isLegal = /lawyer|attorney|legal|advocate|law\s*firm/i.test(catLower);
+  const isSolarRoofing = /solar|roof|contractor|construction|builder|hvac/i.test(catLower);
+  const isMedSpa = /med\s*spa|spa|aesthetic|botox|skin|cosmetic|dentist|dental|clinic/i.test(catLower);
+  const isLogistics = /logistics|freight|trucking|cargo|warehouse|shipping/i.test(catLower);
 
-  const genericPrefixes = ['Premier', 'Apex', 'Prime', 'Metro', 'Royal', 'Elite', 'Vanguard', 'Precision', 'Signature', 'Imperial', 'Central', 'Horizon', 'Global', 'Summit', 'Direct'];
-  const genericSuffixes = ['Group', 'Associates', 'Solutions', 'Partners', 'Center', 'Studio', 'Hub', 'Services', 'Network', 'Consultants', 'Enterprises'];
+  let pList = ['Premier', 'Apex', 'Prime', 'Metro', 'Royal', 'Elite', 'Vanguard', 'Precision', 'Signature', 'Imperial', 'Central', 'Horizon', 'Global', 'Summit', 'Direct'];
+  let sList = ['Group', 'Associates', 'Solutions', 'Partners', 'Center', 'Studio', 'Hub', 'Services', 'Network', 'Consultants', 'Enterprises'];
+
+  if (isRealEstate) {
+    pList = ['Prestige', 'Apex Luxury', 'Prime Capital', 'Signature', 'Vanguard', 'Sotheby', 'First Choice', 'Imperial', 'Horizon', 'Golden Key', 'Metropolitan', 'Compass', 'Crown', 'Elite Global', 'Summit'];
+    sList = ['Realty Group', 'Real Estate Advisors', 'Property Partners', 'Luxury Estates', 'Asset Advisors', 'Real Estate Brokerage', 'Homes & Living', 'Investments', 'Commercial Realty', 'Associates'];
+  } else if (isLegal) {
+    pList = ['Sterling & Partners', 'Vanguard Legal', 'Apex Law', 'Beacon Law', 'Summit Counsel', 'Capital Legal', 'Precision Law', 'Prime Advocates', 'Horizon Law', 'Prestige Legal'];
+    sList = ['Attorneys at Law', 'Legal Counsel', 'Law Chambers', 'Law Partners', 'Advocates & Associates', 'Legal Group', 'Litigation Partners'];
+  } else if (isSolarRoofing) {
+    pList = ['SunPower', 'Apex Solar', 'Horizon Clean Energy', 'Titan Commercial', 'Summit Solar', 'Vanguard Roofing', 'Precision Energy', 'Prime Solar', 'Elite Contractors'];
+    sList = ['Solar Solutions', 'Roofing Contractors', 'Clean Energy Group', 'Commercial Roofing', 'Solar Specialists', 'Builders & Contractors', 'Energy Systems'];
+  } else if (isMedSpa) {
+    pList = ['Luxe Aesthetics', 'Radiance', 'Aura Medical', 'Elite MedSpa', 'Glow Laser', 'Prestige Wellness', 'Bella Aesthetics', 'Prime Skin', 'Horizon MedSpa'];
+    sList = ['Aesthetics Clinic', 'MedSpa & Wellness', 'Skin & Laser Center', 'Cosmetic Studio', 'Aesthetic Doctors', 'Medical Aesthetics', 'Wellness Sanctuary'];
+  } else if (isLogistics) {
+    pList = ['Apex Global', 'TransWorld', 'Swift Logistics', 'Vanguard Freight', 'Pacific Cargo', 'Summit 3PL', 'Oceanic Freight', 'Express Logistics'];
+    sList = ['Logistics Solutions', 'Freight Forwarders', 'Supply Chain Partners', 'Cargo Network', '3PL Logistics', 'Transport Group', 'Global Freight'];
+  }
 
   const uaeStreets = ['Sheikh Zayed Road', 'Downtown Boulevard', 'Marina Walk', 'Al Khaleej Al Tejari Street', 'Al Saada Street', 'King Salman Bin Abdulaziz Al Saud St'];
   const usaStreets = ['Brickell Avenue', '5th Avenue', 'Ocean Drive', 'Wilshire Boulevard', 'Michigan Avenue', 'Broadway', 'Collins Avenue'];
