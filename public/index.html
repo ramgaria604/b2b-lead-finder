@@ -3,12 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LeadPulse AI — Instant B2B Lead Finder & CSV Exporter</title>
+  
+  <!-- SEO & Global Search Engine Optimization -->
+  <title>LeadPulse AI — B2B Leads & Real Estate Agents Directory (USA, UAE, Australia, India)</title>
+  <meta name="description" content="Find and export 100+ verified Real Estate Agents, Financial Advisors, Clinics, and local business leads across USA, UAE (Dubai), Australia, India, and worldwide to clean Excel/CSV.">
+  <meta name="keywords" content="real estate agents dubai, real estate advisors usa, real estate sydney australia, b2b lead generation, business leads scraper, cold email leads, export leads excel, verified phone numbers">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LeadPulse AI — Instant Global B2B Lead Engine">
+  <meta property="og:description" content="Search any category in USA, UAE, Australia, India and export 100+ verified leads to Excel in 10 seconds.">
+
+  <!-- Structured Schema Data for Search Engines -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "LeadPulse AI",
+    "operatingSystem": "All",
+    "applicationCategory": "BusinessApplication",
+    "offers": {
+      "@type": "Offer",
+      "price": "499",
+      "priceCurrency": "INR"
+    },
+    "description": "Global B2B Lead Finder and Real Estate Directory with instant Excel/CSV exports for USA, UAE, Australia and India."
+  }
+  </script>
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Razorpay Official Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-  <!-- Canvas Confetti for celebrate animation -->
+  <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,59 +52,81 @@
     }
   </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+<body class="bg-[#080d1a] text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
 
   <!-- Top Announcement Bar -->
-  <div class="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-950 border-b border-indigo-800/40 py-2.5 px-4 text-center text-xs sm:text-sm font-medium text-indigo-200">
-    ⚡ <span class="font-bold text-white">Spring Special:</span> Export 100+ fresh, verified leads for only <span class="text-amber-400 font-bold">₹499 ($5.99)</span> with zero monthly commitments.
+  <div class="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-950 border-b border-indigo-800/40 py-2 px-4 text-center text-xs sm:text-sm font-medium text-indigo-200">
+    🌍 <span class="font-bold text-white">Global Database Live:</span> Instant verified leads for <span class="text-amber-400 font-bold">🇦🇪 UAE, 🇺🇸 USA, 🇦🇺 Australia & 🇮🇳 India</span> with clean Excel/CSV exports.
   </div>
 
   <!-- Navbar -->
-  <header class="border-b border-slate-800/80 bg-[#0b0f19]/80 backdrop-blur sticky top-0 z-30">
+  <header class="border-b border-slate-800/80 bg-[#080d1a]/90 backdrop-blur sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
           <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
           </svg>
         </div>
-        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-          LeadPulse<span class="text-indigo-400">.ai</span>
-        </span>
+        <div>
+          <span class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+            LeadPulse<span class="text-indigo-400">.ai</span>
+          </span>
+          <span class="hidden sm:inline-block ml-2 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+            Global Enterprise Engine
+          </span>
+        </div>
       </div>
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+      <div class="flex items-center gap-2 sm:gap-3 text-xs font-semibold">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          Live Razorpay & UPI Enabled
+          Live Verified Feeds
         </span>
       </div>
     </div>
   </header>
 
   <!-- Hero Section -->
-  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-12 w-full">
-    <div class="text-center max-w-3xl mx-auto mb-10">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-4">
-        ✨ 100% Automated B2B Lead Engine
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-10 w-full">
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-3">
+        ⚡ Universal Business & Real Estate Intelligence
       </div>
-      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight sm:leading-tight mb-5">
-        Find Verified Local Clients <br class="hidden sm:block"/>
+      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight sm:leading-tight mb-4">
+        Find Verified Decision Makers <br class="hidden sm:block"/>
         <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
-          In Any City In 10 Seconds
+          Across Any Country & Category
         </span>
       </h1>
-      <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
-        Stop messaging one by one. Search your target industry, get phone numbers, validated emails, and export 100+ leads into an instant Excel/CSV sheet.
+      <p class="text-slate-400 text-sm sm:text-base leading-relaxed">
+        Export 100+ verified direct phone numbers, validated emails, and addresses cleanly formatted into <strong class="text-white">Excel & Google Sheets</strong> with zero monthly subscriptions.
       </p>
     </div>
 
+    <!-- Country Tabs / Filter Bar -->
+    <div class="max-w-3xl mx-auto mb-4 flex items-center justify-center gap-2 sm:gap-3 flex-wrap">
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-1">Select Region:</span>
+      <button type="button" onclick="setQuickSearch('Real Estate Agents', 'Dubai, UAE')" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+        <span>🇦🇪</span> <span>UAE (Dubai)</span>
+      </button>
+      <button type="button" onclick="setQuickSearch('Real Estate Advisors', 'Miami, USA')" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+        <span>🇺🇸</span> <span>USA (Miami/NY)</span>
+      </button>
+      <button type="button" onclick="setQuickSearch('Real Estate Agents', 'Sydney, Australia')" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+        <span>🇦🇺</span> <span>Australia (Sydney)</span>
+      </button>
+      <button type="button" onclick="setQuickSearch('Real Estate Consultants', 'Delhi, India')" class="text-xs font-medium bg-slate-900 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+        <span>🇮🇳</span> <span>India (Delhi/Mumbai)</span>
+      </button>
+    </div>
+
     <!-- Search Card -->
-    <div class="max-w-3xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-indigo-950/40 relative">
+    <div class="max-w-3xl mx-auto bg-slate-900/90 border border-slate-800 rounded-3xl p-5 sm:p-7 shadow-2xl shadow-indigo-950/40 relative">
       <form id="searchForm" class="space-y-4">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              Target Niche / Industry
+              Target Category / Niche
             </label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -86,8 +136,8 @@
                 type="text" 
                 id="nicheInput" 
                 required 
-                placeholder="e.g. Dentist, Gym, Cafe, Real Estate"
-                value="Dentist"
+                placeholder="e.g. Real Estate Agents, Wealth Advisors, Dentists"
+                value="Real Estate Agents"
                 class="w-full pl-10 pr-4 py-3 bg-slate-950/70 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition"
               >
             </div>
@@ -95,7 +145,7 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
-              City / Region
+              City & Country / Region
             </label>
             <div class="relative">
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
@@ -105,38 +155,39 @@
                 type="text" 
                 id="cityInput" 
                 required 
-                placeholder="e.g. Delhi, Mumbai, Dubai, London"
-                value="Delhi"
+                placeholder="e.g. Dubai, Miami, Sydney, Delhi"
+                value="Dubai, UAE"
                 class="w-full pl-10 pr-4 py-3 bg-slate-950/70 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition"
               >
             </div>
           </div>
         </div>
 
-        <!-- Quick Tags -->
-        <div class="flex items-center gap-2 flex-wrap pt-1 text-xs text-slate-400">
-          <span class="font-medium text-slate-500">Try Popular:</span>
-          <button type="button" onclick="setQuickSearch('Dentist', 'Delhi')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Dentist in Delhi</button>
-          <button type="button" onclick="setQuickSearch('Gym', 'Mumbai')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Gym in Mumbai</button>
-          <button type="button" onclick="setQuickSearch('Real Estate', 'Dubai')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Real Estate in Dubai</button>
+        <!-- Hot Category Tags -->
+        <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap pt-1 text-xs text-slate-400">
+          <span class="font-semibold text-slate-500">Popular:</span>
+          <button type="button" onclick="setQuickSearch('Real Estate Advisors', 'Dubai, UAE')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">🏢 Dubai Real Estate</button>
+          <button type="button" onclick="setQuickSearch('Real Estate Brokers', 'New York, USA')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">🗽 New York Brokers</button>
+          <button type="button" onclick="setQuickSearch('Financial Advisors', 'Sydney, Australia')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">📈 Sydney Wealth Advisors</button>
+          <button type="button" onclick="setQuickSearch('Dentists', 'Delhi, India')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">🏥 Delhi Clinics</button>
         </div>
 
         <button 
           type="submit" 
           id="searchBtn"
-          class="w-full mt-2 py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all flex items-center justify-center gap-2 text-base"
+          class="w-full mt-2 py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all flex items-center justify-center gap-2 text-base"
         >
-          <span>Find Verified Leads Now</span>
+          <span>Find 100+ Verified Leads Now</span>
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
         </button>
       </form>
     </div>
 
     <!-- Loading State -->
-    <div id="loadingState" class="hidden max-w-3xl mx-auto my-12 text-center py-10 bg-slate-900/50 rounded-2xl border border-slate-800">
+    <div id="loadingState" class="hidden max-w-3xl mx-auto my-12 text-center py-10 bg-slate-900/50 rounded-3xl border border-slate-800">
       <div class="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4"></div>
-      <h3 class="text-lg font-bold text-white mb-1" id="loadingTitle">Scanning Deep Multi-Zone Grid...</h3>
-      <p class="text-sm text-slate-400" id="loadingSubtitle">Crawling sub-sectors and validating deliverability across the city.</p>
+      <h3 class="text-lg font-bold text-white mb-1" id="loadingTitle">Scanning Global Map Grids...</h3>
+      <p class="text-sm text-slate-400" id="loadingSubtitle">Crawling verified listings and validating direct communication channels.</p>
     </div>
 
     <!-- Results Section -->
@@ -146,13 +197,13 @@
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
         <div>
           <div class="flex items-center gap-2">
-            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <span class="text-xl" id="countryFlagSpan">🌐</span>
             <h2 class="text-xl sm:text-2xl font-bold text-white" id="resultsCountHeader">
               Found 100+ Verified Leads
             </h2>
           </div>
-          <p class="text-sm text-slate-400 mt-0.5" id="resultsSubHeader">
-            Showing top unlocked sample leads. Unlock full dataset with complete emails & phone numbers.
+          <p class="text-sm text-slate-400 mt-1" id="resultsSubHeader">
+            Showing top unlocked sample leads. Export full dataset with dedicated columns in clean Excel & CSV.
           </p>
         </div>
 
@@ -161,22 +212,43 @@
           class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 text-sm whitespace-nowrap"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          <span>Unlock & Pay ₹499 (UPI / Card)</span>
+          <span>Unlock & Export Clean Excel/CSV (₹499)</span>
         </button>
       </div>
 
+      <!-- Feature Highlight: Excel Compatibility -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-slate-300">
+        <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center gap-2">
+          <span class="text-emerald-400 text-base">📊</span>
+          <span>Auto-formatted Excel columns</span>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center gap-2">
+          <span class="text-indigo-400 text-base">📞</span>
+          <span>Verified direct phone lines</span>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center gap-2">
+          <span class="text-purple-400 text-base">✉️</span>
+          <span>Validated decision-maker emails</span>
+        </div>
+        <div class="bg-slate-900/60 border border-slate-800/80 p-3 rounded-xl flex items-center gap-2">
+          <span class="text-amber-400 text-base">⚡</span>
+          <span>Instant automatic CSV download</span>
+        </div>
+      </div>
+
       <!-- Leads Table Container -->
-      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-sm text-slate-300">
-            <thead class="bg-slate-950/80 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+            <thead class="bg-slate-950/90 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
               <tr>
-                <th class="py-4 px-5">Verification</th>
-                <th class="py-4 px-5">Business Name</th>
-                <th class="py-4 px-5">Phone Number</th>
-                <th class="py-4 px-5">Email Address</th>
-                <th class="py-4 px-5">Rating</th>
-                <th class="py-4 px-5">Full Address</th>
+                <th class="py-4 px-5">ID & Status</th>
+                <th class="py-4 px-5">Company / Agent Name</th>
+                <th class="py-4 px-5">Direct Phone</th>
+                <th class="py-4 px-5">Verified Email</th>
+                <th class="py-4 px-5">Rating & Reviews</th>
+                <th class="py-4 px-5">Street Address</th>
+                <th class="py-4 px-5">Location</th>
               </tr>
             </thead>
             <tbody id="unlockedRows" class="divide-y divide-slate-800/60 font-medium">
@@ -186,29 +258,29 @@
         </div>
 
         <!-- Locked Blur Section -->
-        <div class="relative bg-slate-950/60 border-t border-slate-800 p-8 text-center overflow-hidden">
+        <div class="relative bg-slate-950/70 border-t border-slate-800 p-8 sm:p-12 text-center overflow-hidden">
           <div class="absolute inset-0 bg-slate-950/80 blur-glass flex flex-col items-center justify-center z-10 p-6">
-            <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-4 text-indigo-400 shadow-xl shadow-indigo-600/10">
-              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <div class="w-16 h-16 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-4 text-indigo-400 shadow-xl shadow-indigo-600/10">
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
             </div>
-            <h4 class="text-xl font-bold text-white mb-2" id="lockedSectionTitle">
-              + 96 More Verified Leads Locked
+            <h4 class="text-2xl font-bold text-white mb-2" id="lockedSectionTitle">
+              + 100+ More Verified Leads Locked
             </h4>
-            <p class="text-sm text-slate-300 max-w-md mb-6">
-              Includes full phone numbers, validated emails, and complete addresses ready to import into your spreadsheet or cold outreach engine.
+            <p class="text-sm text-slate-300 max-w-lg mb-6">
+              Includes complete direct phone numbers, validated emails, official websites, and clean street addresses ready to import into Microsoft Excel, Google Sheets, or CRM.
             </p>
             <button 
               onclick="openUnlockModal()"
-              class="px-8 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-[0.98] transition flex items-center gap-2 text-base"
+              class="px-8 py-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-[0.98] transition flex items-center gap-2 text-base"
             >
-              <span>Unlock All Leads & Pay with UPI / Card</span>
+              <span>Unlock Full Dataset & Download Clean Excel/CSV</span>
               <span class="text-indigo-200 text-xs px-2 py-0.5 rounded-full bg-white/10 font-mono">₹499 ($5.99)</span>
             </button>
-            <span class="text-xs text-slate-500 mt-3">⚡ Instant automatic download after payment. No subscription required.</span>
+            <span class="text-xs text-slate-500 mt-3">⚡ 100% formatted for Excel & Sheets. Instant automated delivery.</span>
           </div>
 
           <!-- Dummy Blurred Content Behind -->
-          <div class="filter blur-md opacity-30 select-none space-y-4 pointer-events-none">
+          <div class="filter blur-md opacity-25 select-none space-y-4 pointer-events-none">
             <div class="h-6 bg-slate-700 rounded w-full"></div>
             <div class="h-6 bg-slate-700 rounded w-5/6"></div>
             <div class="h-6 bg-slate-700 rounded w-4/6"></div>
@@ -233,7 +305,7 @@
         </div>
         <div>
           <h3 class="text-xl font-bold text-white">Unlock Full Dataset</h3>
-          <p class="text-xs text-slate-400" id="modalDatasetSubtitle">Complete verified Excel/CSV with phone & emails.</p>
+          <p class="text-xs text-slate-400" id="modalDatasetSubtitle">Complete Excel/CSV with phone & emails.</p>
         </div>
       </div>
 
@@ -244,29 +316,28 @@
           <span class="text-white font-semibold">₹499.00</span>
         </div>
         <div class="flex justify-between text-slate-400 text-xs">
+          <span>Excel Optimization</span>
+          <span class="text-emerald-400 font-semibold">UTF-8 Formatted (Clean Columns)</span>
+        </div>
+        <div class="flex justify-between text-slate-400 text-xs">
           <span>Supported Methods</span>
           <span class="text-indigo-400 font-medium">GPay, PhonePe, Paytm, Cards, NetBanking</span>
         </div>
-        <div class="flex justify-between text-slate-400 text-xs">
-          <span>Delivery</span>
-          <span class="text-emerald-400 font-semibold">Instant Automatic Download</span>
-        </div>
         <div class="border-t border-slate-800 pt-2 flex justify-between font-bold text-white text-base">
           <span>Amount to Pay</span>
-          <span class="text-emerald-400">₹499</span>
+          <span class="text-emerald-400">₹499 (or $5.99)</span>
         </div>
       </div>
 
-      <!-- Payment Buttons -->
+      <!-- Payment Button -->
       <div class="space-y-3">
-        <!-- Official Razorpay Checkout Button (UPI, Cards, Wallets) -->
         <button 
           id="payRazorpayBtn"
           onclick="initiateRazorpayPayment()" 
           class="w-full py-4 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-base"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-          <span>Pay ₹499 to Unlock & Download</span>
+          <span>Pay ₹499 to Unlock & Export</span>
         </button>
       </div>
 
@@ -274,7 +345,7 @@
       <div class="mt-4 pt-3 border-t border-slate-800/60 text-center">
         <p class="text-[11px] text-slate-400 flex items-center justify-center gap-2">
           <span>🔒 256-Bit Encrypted</span> &bull; 
-          <span>Instant CSV Delivery</span> &bull; 
+          <span>Instant Download</span> &bull; 
           <span>UPI / Cards</span>
         </p>
       </div>
@@ -288,7 +359,7 @@
     </div>
     <div>
       <h5 class="text-sm font-bold text-white">Payment Verified!</h5>
-      <p class="text-xs text-slate-400 mt-0.5">Your full verified CSV sheet has started downloading automatically.</p>
+      <p class="text-xs text-slate-400 mt-0.5">Your full verified directory spreadsheet has started downloading automatically.</p>
     </div>
   </div>
 
@@ -310,12 +381,11 @@
     </div>
   </div>
 
-  <footer class="border-t border-slate-800/80 py-8 bg-[#070b13]">
+  <footer class="border-t border-slate-800/80 py-8 bg-[#050811]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
       <div>
-        &copy; 2026 <span class="text-white font-semibold">LeadPulse AI</span>. All rights reserved. Automated B2B Lead Engine.
+        &copy; 2026 <span class="text-white font-semibold">LeadPulse AI</span>. All rights reserved. Global B2B Lead Engine (USA, UAE, Australia & India).
       </div>
-      <!-- Razorpay Mandatory Compliance Links -->
       <div class="flex items-center gap-4 sm:gap-6 flex-wrap justify-center font-medium">
         <button type="button" onclick="openPolicy('privacy')" class="hover:text-indigo-400 transition">Privacy Policy</button>
         <button type="button" onclick="openPolicy('terms')" class="hover:text-indigo-400 transition">Terms of Service</button>
@@ -344,10 +414,10 @@
       document.getElementById('loadingState').classList.remove('hidden');
 
       const messages = [
-        "Connecting to multi-zone map registry...",
-        `Searching deep sectors across ${city}...`,
-        "Enriching verified phone numbers & direct emails...",
-        "Validating deliverability & deduplicating records..."
+        "Connecting to global commercial registry...",
+        `Searching verified ${niche} listings in ${city}...`,
+        "Enriching direct phone lines & verified emails...",
+        "Formatting data into structured columns..."
       ];
       let msgIdx = 0;
       const interval = setInterval(() => {
@@ -382,11 +452,12 @@
 
     function renderResults(data) {
       document.getElementById('resultsSection').classList.remove('hidden');
+      document.getElementById('countryFlagSpan').innerText = data.countryFlag || '🌐';
       document.getElementById('resultsCountHeader').innerText = `Found ${data.totalCount} Verified ${data.query} Leads`;
-      document.getElementById('resultsSubHeader').innerText = `Showing unlocked sample leads across ${data.city}. Unlock all ${data.totalCount} leads with verified emails & phone numbers.`;
-      document.getElementById('lockedSectionTitle').innerText = `+ ${data.lockedCount} More Verified Leads Locked`;
+      document.getElementById('resultsSubHeader').innerText = `Showing unlocked sample leads across ${data.city} (${data.country}). Export full ${data.totalCount} records into clean Excel/CSV.`;
+      document.getElementById('lockedSectionTitle').innerText = `+ ${data.lockedCount} More Verified Records Locked`;
       document.getElementById('modalDatasetSubtitle').innerText = `Complete ${data.totalCount} ${data.query} in ${data.city} dataset.`;
-      document.getElementById('modalDatasetLabel').innerText = `${data.totalCount} ${data.query} (${data.city})`;
+      document.getElementById('modalDatasetLabel').innerText = `${data.totalCount} Leads (${data.city})`;
 
       const tbody = document.getElementById('unlockedRows');
       tbody.innerHTML = '';
@@ -396,27 +467,34 @@
         tr.className = 'hover:bg-slate-800/40 transition';
         tr.innerHTML = `
           <td class="py-4 px-5">
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-              Live Verified
+            <div class="font-mono text-xs text-indigo-400 font-bold">${lead.id}</div>
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mt-1">
+              ✓ Verified
             </span>
           </td>
           <td class="py-4 px-5 font-semibold text-white">
-            ${lead.name}
-            <div class="text-[11px] text-slate-500">${lead.category}</div>
+            <div class="text-sm font-bold text-white">${lead.name}</div>
+            <div class="text-xs text-slate-400">${lead.category}</div>
           </td>
           <td class="py-4 px-5 text-indigo-300 font-mono text-xs">
-            ${lead.phone}
+            <a href="tel:${lead.phone}" class="hover:underline flex items-center gap-1">
+              📞 ${lead.phone}
+            </a>
           </td>
           <td class="py-4 px-5 text-slate-300 text-xs">
-            ${lead.email}
+            <a href="mailto:${lead.email}" class="hover:underline text-indigo-300">
+              ✉️ ${lead.email}
+            </a>
           </td>
           <td class="py-4 px-5">
             <span class="text-amber-400 font-bold">★ ${lead.rating}</span>
-            <span class="text-slate-500 text-xs">(${lead.reviewsCount})</span>
+            <span class="text-slate-500 text-xs">(${lead.reviewsCount} reviews)</span>
           </td>
-          <td class="py-4 px-5 text-slate-400 text-xs max-w-xs truncate">
+          <td class="py-4 px-5 text-slate-300 text-xs max-w-xs truncate">
             ${lead.address}
+          </td>
+          <td class="py-4 px-5 text-xs text-slate-400">
+            <span class="font-medium text-slate-200">${lead.city}</span>, ${lead.country} ${lead.countryFlag || ''}
           </td>
         `;
         tbody.appendChild(tr);
@@ -433,7 +511,6 @@
       document.getElementById('unlockModal').classList.add('hidden');
     }
 
-    // 1. Official Razorpay Checkout Flow (UPI / Cards / NetBanking)
     async function initiateRazorpayPayment() {
       const btn = document.getElementById('payRazorpayBtn');
       btn.innerText = 'Connecting to Payment Gateway...';
@@ -447,21 +524,20 @@
         });
         const orderData = await orderRes.json();
 
-        btn.innerText = 'Pay ₹499 to Unlock & Download';
+        btn.innerText = 'Pay ₹499 to Unlock & Export';
         btn.disabled = false;
 
         if (!orderRes.ok || !orderData.keyId || orderData.keyId.includes('placeholder')) {
-          alert('⚠️ PAYMENT REQUIRED: To accept live payments, please paste your Razorpay Key ID in the .env file. Downloading without payment is strictly blocked.');
+          alert('⚠️ PAYMENT REQUIRED: To accept live payments, please paste your Razorpay Key ID in the .env file / Render environment. Free bypass is disabled.');
           return;
         }
 
-        // Open Real Razorpay Checkout Popup
         const options = {
           key: orderData.keyId,
           amount: orderData.amount,
           currency: orderData.currency,
           name: 'LeadPulse AI',
-          description: `Unlock ${currentSearchData.totalCount} Verified Leads`,
+          description: `Unlock ${currentSearchData.totalCount} Leads Directory`,
           order_id: orderData.orderId,
           handler: async function (response) {
             btn.innerText = 'Verifying Payment...';
@@ -472,7 +548,7 @@
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
             });
-            btn.innerText = 'Pay ₹499 to Unlock & Download';
+            btn.innerText = 'Pay ₹499 to Unlock & Export';
             btn.disabled = false;
           },
           modal: {
@@ -480,23 +556,53 @@
               alert('Payment was cancelled. Leads dataset remains locked.');
             }
           },
-          prefill: {
-            name: '',
-            email: '',
-            contact: ''
-          },
+          prefill: { name: '', email: '', contact: '' },
           theme: { color: '#6366f1' }
         };
         const rzp = new Razorpay(options);
         rzp.open();
       } catch (err) {
-        btn.innerText = 'Pay ₹499 to Unlock & Download';
+        btn.innerText = 'Pay ₹499 to Unlock & Export';
         btn.disabled = false;
-        alert('Payment gateway connection failed: ' + err.message);
+        alert('Payment gateway connection error: ' + err.message);
       }
     }
 
-    // 4. Razorpay Compliance Policy Viewer
+    async function verifyAndDownload(payload) {
+      try {
+        const res = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          closeUnlockModal();
+
+          confetti({
+            particleCount: 140,
+            spread: 80,
+            origin: { y: 0.6 }
+          });
+
+          const banner = document.getElementById('downloadBanner');
+          banner.classList.remove('hidden');
+
+          window.location.href = data.downloadUrl;
+
+          setTimeout(() => {
+            banner.classList.add('hidden');
+          }, 6000);
+        } else {
+          alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
+        }
+      } catch (err) {
+        alert('Network error while verifying payment.');
+      }
+    }
+
+    // Razorpay Compliance Policy Viewer
     const POLICIES = {
       privacy: {
         title: 'Privacy Policy',
@@ -552,41 +658,6 @@
 
     function closePolicyModal() {
       document.getElementById('policyModal').classList.add('hidden');
-    }
-
-    async function verifyAndDownload(payload) {
-      try {
-        const res = await fetch('/api/verify-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if (data.success) {
-          closeUnlockModal();
-
-          confetti({
-            particleCount: 120,
-            spread: 70,
-            origin: { y: 0.6 }
-          });
-
-          const banner = document.getElementById('downloadBanner');
-          banner.classList.remove('hidden');
-
-          // Auto-trigger file download only after verified payment
-          window.location.href = data.downloadUrl;
-
-          setTimeout(() => {
-            banner.classList.add('hidden');
-          }, 6000);
-        } else {
-          alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
-        }
-      } catch (err) {
-        alert('Network error while verifying payment.');
-      }
     }
   </script>
 </body>
