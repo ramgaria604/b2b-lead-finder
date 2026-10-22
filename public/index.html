@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeadPulse AI — Instant B2B Lead Finder & CSV Exporter</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Razorpay Official Checkout SDK -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <!-- Canvas Confetti for celebrate animation -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .blur-glass {
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0f19] text-slate-100 min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Announcement Bar -->
+  <div class="bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-950 border-b border-indigo-800/40 py-2.5 px-4 text-center text-xs sm:text-sm font-medium text-indigo-200">
+    ⚡ <span class="font-bold text-white">Spring Special:</span> Export 100+ fresh, verified leads for only <span class="text-amber-400 font-bold">₹499 ($5.99)</span> with zero monthly commitments.
+  </div>
+
+  <!-- Navbar -->
+  <header class="border-b border-slate-800/80 bg-[#0b0f19]/80 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
+          LeadPulse<span class="text-indigo-400">.ai</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Live Razorpay & UPI Enabled
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 py-12 w-full">
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-4">
+        ✨ 100% Automated B2B Lead Engine
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight sm:leading-tight mb-5">
+        Find Verified Local Clients <br class="hidden sm:block"/>
+        <span class="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+          In Any City In 10 Seconds
+        </span>
+      </h1>
+      <p class="text-slate-400 text-base sm:text-lg leading-relaxed">
+        Stop messaging one by one. Search your target industry, get phone numbers, validated emails, and export 100+ leads into an instant Excel/CSV sheet.
+      </p>
+    </div>
+
+    <!-- Search Card -->
+    <div class="max-w-3xl mx-auto bg-slate-900/90 border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl shadow-indigo-950/40 relative">
+      <form id="searchForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              Target Niche / Industry
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+              </span>
+              <input 
+                type="text" 
+                id="nicheInput" 
+                required 
+                placeholder="e.g. Dentist, Gym, Cafe, Real Estate"
+                value="Dentist"
+                class="w-full pl-10 pr-4 py-3 bg-slate-950/70 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition"
+              >
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
+              City / Region
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </span>
+              <input 
+                type="text" 
+                id="cityInput" 
+                required 
+                placeholder="e.g. Delhi, Mumbai, Dubai, London"
+                value="Delhi"
+                class="w-full pl-10 pr-4 py-3 bg-slate-950/70 border border-slate-700/80 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm transition"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Tags -->
+        <div class="flex items-center gap-2 flex-wrap pt-1 text-xs text-slate-400">
+          <span class="font-medium text-slate-500">Try Popular:</span>
+          <button type="button" onclick="setQuickSearch('Dentist', 'Delhi')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Dentist in Delhi</button>
+          <button type="button" onclick="setQuickSearch('Gym', 'Mumbai')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Gym in Mumbai</button>
+          <button type="button" onclick="setQuickSearch('Real Estate', 'Dubai')" class="hover:text-white bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded-lg transition">Real Estate in Dubai</button>
+        </div>
+
+        <button 
+          type="submit" 
+          id="searchBtn"
+          class="w-full mt-2 py-3.5 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 transition-all flex items-center justify-center gap-2 text-base"
+        >
+          <span>Find Verified Leads Now</span>
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </form>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingState" class="hidden max-w-3xl mx-auto my-12 text-center py-10 bg-slate-900/50 rounded-2xl border border-slate-800">
+      <div class="w-12 h-12 border-4 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin mx-auto mb-4"></div>
+      <h3 class="text-lg font-bold text-white mb-1" id="loadingTitle">Scanning Deep Multi-Zone Grid...</h3>
+      <p class="text-sm text-slate-400" id="loadingSubtitle">Crawling sub-sectors and validating deliverability across the city.</p>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="hidden mt-12 space-y-6">
+      
+      <!-- Results Header & Value Callout -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-900/80 border border-slate-800 p-5 rounded-2xl">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500"></span>
+            <h2 class="text-xl sm:text-2xl font-bold text-white" id="resultsCountHeader">
+              Found 100+ Verified Leads
+            </h2>
+          </div>
+          <p class="text-sm text-slate-400 mt-0.5" id="resultsSubHeader">
+            Showing top unlocked sample leads. Unlock full dataset with complete emails & phone numbers.
+          </p>
+        </div>
+
+        <button 
+          onclick="openUnlockModal()"
+          class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 shadow-lg shadow-emerald-500/20 transition flex items-center justify-center gap-2 text-sm whitespace-nowrap"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          <span>Unlock & Pay ₹499 (UPI / Card)</span>
+        </button>
+      </div>
+
+      <!-- Leads Table Container -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-950/80 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="py-4 px-5">Verification</th>
+                <th class="py-4 px-5">Business Name</th>
+                <th class="py-4 px-5">Phone Number</th>
+                <th class="py-4 px-5">Email Address</th>
+                <th class="py-4 px-5">Rating</th>
+                <th class="py-4 px-5">Full Address</th>
+              </tr>
+            </thead>
+            <tbody id="unlockedRows" class="divide-y divide-slate-800/60 font-medium">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Locked Blur Section -->
+        <div class="relative bg-slate-950/60 border-t border-slate-800 p-8 text-center overflow-hidden">
+          <div class="absolute inset-0 bg-slate-950/80 blur-glass flex flex-col items-center justify-center z-10 p-6">
+            <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-4 text-indigo-400 shadow-xl shadow-indigo-600/10">
+              <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            <h4 class="text-xl font-bold text-white mb-2" id="lockedSectionTitle">
+              + 96 More Verified Leads Locked
+            </h4>
+            <p class="text-sm text-slate-300 max-w-md mb-6">
+              Includes full phone numbers, validated emails, and complete addresses ready to import into your spreadsheet or cold outreach engine.
+            </p>
+            <button 
+              onclick="openUnlockModal()"
+              class="px-8 py-3.5 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-600/40 hover:scale-[1.02] active:scale-[0.98] transition flex items-center gap-2 text-base"
+            >
+              <span>Unlock All Leads & Pay with UPI / Card</span>
+              <span class="text-indigo-200 text-xs px-2 py-0.5 rounded-full bg-white/10 font-mono">₹499 ($5.99)</span>
+            </button>
+            <span class="text-xs text-slate-500 mt-3">⚡ Instant automatic download after payment. No subscription required.</span>
+          </div>
+
+          <!-- Dummy Blurred Content Behind -->
+          <div class="filter blur-md opacity-30 select-none space-y-4 pointer-events-none">
+            <div class="h-6 bg-slate-700 rounded w-full"></div>
+            <div class="h-6 bg-slate-700 rounded w-5/6"></div>
+            <div class="h-6 bg-slate-700 rounded w-4/6"></div>
+            <div class="h-6 bg-slate-700 rounded w-full"></div>
+            <div class="h-6 bg-slate-700 rounded w-3/4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Checkout / Unlock Modal with Razorpay + UPI -->
+  <div id="unlockModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative">
+      <button onclick="closeUnlockModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center shrink-0">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white">Unlock Full Dataset</h3>
+          <p class="text-xs text-slate-400" id="modalDatasetSubtitle">Complete verified Excel/CSV with phone & emails.</p>
+        </div>
+      </div>
+
+      <!-- Order Summary Card -->
+      <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 mb-5 space-y-2 text-sm">
+        <div class="flex justify-between text-slate-300">
+          <span id="modalDatasetLabel">100+ Leads Dataset</span>
+          <span class="text-white font-semibold">₹499.00</span>
+        </div>
+        <div class="flex justify-between text-slate-400 text-xs">
+          <span>Supported Methods</span>
+          <span class="text-indigo-400 font-medium">GPay, PhonePe, Paytm, Cards, NetBanking</span>
+        </div>
+        <div class="flex justify-between text-slate-400 text-xs">
+          <span>Delivery</span>
+          <span class="text-emerald-400 font-semibold">Instant Automatic Download</span>
+        </div>
+        <div class="border-t border-slate-800 pt-2 flex justify-between font-bold text-white text-base">
+          <span>Amount to Pay</span>
+          <span class="text-emerald-400">₹499</span>
+        </div>
+      </div>
+
+      <!-- Payment Buttons -->
+      <div class="space-y-3">
+        <!-- Official Razorpay Checkout Button (UPI, Cards, Wallets) -->
+        <button 
+          id="payRazorpayBtn"
+          onclick="initiateRazorpayPayment()" 
+          class="w-full py-4 px-4 rounded-xl font-bold text-white bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 shadow-xl shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-base"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Pay ₹499 to Unlock & Download</span>
+        </button>
+      </div>
+
+      <!-- Security / UPI Logos Footer -->
+      <div class="mt-4 pt-3 border-t border-slate-800/60 text-center">
+        <p class="text-[11px] text-slate-400 flex items-center justify-center gap-2">
+          <span>🔒 256-Bit Encrypted</span> &bull; 
+          <span>Instant CSV Delivery</span> &bull; 
+          <span>UPI / Cards</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Notification Floating Banner -->
+  <div id="downloadBanner" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 border border-emerald-500/40 p-4 rounded-2xl shadow-2xl shadow-emerald-950/60 max-w-sm flex items-start gap-3">
+    <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+    </div>
+    <div>
+      <h5 class="text-sm font-bold text-white">Payment Verified!</h5>
+      <p class="text-xs text-slate-400 mt-0.5">Your full verified CSV sheet has started downloading automatically.</p>
+    </div>
+  </div>
+
+  <!-- Policy & Legal Modals for Razorpay Compliance -->
+  <div id="policyModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl relative">
+      <div class="p-6 border-b border-slate-800 flex items-center justify-between">
+        <h3 id="policyModalTitle" class="text-xl font-bold text-white">Policy</h3>
+        <button onclick="closePolicyModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div id="policyModalBody" class="p-6 overflow-y-auto text-sm text-slate-300 leading-relaxed space-y-4">
+        <!-- Injected via JS -->
+      </div>
+      <div class="p-4 border-t border-slate-800 text-right">
+        <button onclick="closePolicyModal()" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-sm font-semibold transition">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-slate-800/80 py-8 bg-[#070b13]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <div>
+        &copy; 2026 <span class="text-white font-semibold">LeadPulse AI</span>. All rights reserved. Automated B2B Lead Engine.
+      </div>
+      <!-- Razorpay Mandatory Compliance Links -->
+      <div class="flex items-center gap-4 sm:gap-6 flex-wrap justify-center font-medium">
+        <button type="button" onclick="openPolicy('privacy')" class="hover:text-indigo-400 transition">Privacy Policy</button>
+        <button type="button" onclick="openPolicy('terms')" class="hover:text-indigo-400 transition">Terms of Service</button>
+        <button type="button" onclick="openPolicy('refund')" class="hover:text-indigo-400 transition">Refund & Cancellation</button>
+        <button type="button" onclick="openPolicy('contact')" class="hover:text-indigo-400 transition">Contact Us</button>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let currentSearchId = null;
+    let currentSearchData = null;
+
+    function setQuickSearch(niche, city) {
+      document.getElementById('nicheInput').value = niche;
+      document.getElementById('cityInput').value = city;
+      document.getElementById('searchBtn').click();
+    }
+
+    document.getElementById('searchForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const niche = document.getElementById('nicheInput').value;
+      const city = document.getElementById('cityInput').value;
+
+      document.getElementById('resultsSection').classList.add('hidden');
+      document.getElementById('loadingState').classList.remove('hidden');
+
+      const messages = [
+        "Connecting to multi-zone map registry...",
+        `Searching deep sectors across ${city}...`,
+        "Enriching verified phone numbers & direct emails...",
+        "Validating deliverability & deduplicating records..."
+      ];
+      let msgIdx = 0;
+      const interval = setInterval(() => {
+        msgIdx = (msgIdx + 1) % messages.length;
+        document.getElementById('loadingSubtitle').innerText = messages[msgIdx];
+      }, 700);
+
+      try {
+        const response = await fetch('/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: niche, city: city })
+        });
+
+        const data = await response.json();
+        clearInterval(interval);
+        document.getElementById('loadingState').classList.add('hidden');
+
+        if (response.ok) {
+          currentSearchId = data.searchId;
+          currentSearchData = data;
+          renderResults(data);
+        } else {
+          alert(data.error || 'Something went wrong during search.');
+        }
+      } catch (err) {
+        clearInterval(interval);
+        document.getElementById('loadingState').classList.add('hidden');
+        alert('Failed to connect to backend server. Make sure server is running.');
+      }
+    });
+
+    function renderResults(data) {
+      document.getElementById('resultsSection').classList.remove('hidden');
+      document.getElementById('resultsCountHeader').innerText = `Found ${data.totalCount} Verified ${data.query} Leads`;
+      document.getElementById('resultsSubHeader').innerText = `Showing unlocked sample leads across ${data.city}. Unlock all ${data.totalCount} leads with verified emails & phone numbers.`;
+      document.getElementById('lockedSectionTitle').innerText = `+ ${data.lockedCount} More Verified Leads Locked`;
+      document.getElementById('modalDatasetSubtitle').innerText = `Complete ${data.totalCount} ${data.query} in ${data.city} dataset.`;
+      document.getElementById('modalDatasetLabel').innerText = `${data.totalCount} ${data.query} (${data.city})`;
+
+      const tbody = document.getElementById('unlockedRows');
+      tbody.innerHTML = '';
+
+      data.unlockedPreview.forEach(lead => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-800/40 transition';
+        tr.innerHTML = `
+          <td class="py-4 px-5">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Live Verified
+            </span>
+          </td>
+          <td class="py-4 px-5 font-semibold text-white">
+            ${lead.name}
+            <div class="text-[11px] text-slate-500">${lead.category}</div>
+          </td>
+          <td class="py-4 px-5 text-indigo-300 font-mono text-xs">
+            ${lead.phone}
+          </td>
+          <td class="py-4 px-5 text-slate-300 text-xs">
+            ${lead.email}
+          </td>
+          <td class="py-4 px-5">
+            <span class="text-amber-400 font-bold">★ ${lead.rating}</span>
+            <span class="text-slate-500 text-xs">(${lead.reviewsCount})</span>
+          </td>
+          <td class="py-4 px-5 text-slate-400 text-xs max-w-xs truncate">
+            ${lead.address}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function openUnlockModal() {
+      document.getElementById('unlockModal').classList.remove('hidden');
+    }
+
+    function closeUnlockModal() {
+      document.getElementById('unlockModal').classList.add('hidden');
+    }
+
+    // 1. Official Razorpay Checkout Flow (UPI / Cards / NetBanking)
+    async function initiateRazorpayPayment() {
+      const btn = document.getElementById('payRazorpayBtn');
+      btn.innerText = 'Connecting to Payment Gateway...';
+      btn.disabled = true;
+
+      try {
+        const orderRes = await fetch('/api/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ searchId: currentSearchId })
+        });
+        const orderData = await orderRes.json();
+
+        btn.innerText = 'Pay ₹499 to Unlock & Download';
+        btn.disabled = false;
+
+        if (!orderRes.ok || !orderData.keyId || orderData.keyId.includes('placeholder')) {
+          alert('⚠️ PAYMENT REQUIRED: To accept live payments, please paste your Razorpay Key ID in the .env file. Downloading without payment is strictly blocked.');
+          return;
+        }
+
+        // Open Real Razorpay Checkout Popup
+        const options = {
+          key: orderData.keyId,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: 'LeadPulse AI',
+          description: `Unlock ${currentSearchData.totalCount} Verified Leads`,
+          order_id: orderData.orderId,
+          handler: async function (response) {
+            btn.innerText = 'Verifying Payment...';
+            btn.disabled = true;
+            await verifyAndDownload({
+              searchId: currentSearchId,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature
+            });
+            btn.innerText = 'Pay ₹499 to Unlock & Download';
+            btn.disabled = false;
+          },
+          modal: {
+            ondismiss: function () {
+              alert('Payment was cancelled. Leads dataset remains locked.');
+            }
+          },
+          prefill: {
+            name: '',
+            email: '',
+            contact: ''
+          },
+          theme: { color: '#6366f1' }
+        };
+        const rzp = new Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        btn.innerText = 'Pay ₹499 to Unlock & Download';
+        btn.disabled = false;
+        alert('Payment gateway connection failed: ' + err.message);
+      }
+    }
+
+    // 4. Razorpay Compliance Policy Viewer
+    const POLICIES = {
+      privacy: {
+        title: 'Privacy Policy',
+        content: `
+          <p class="font-semibold text-white">Last updated: October 2026</p>
+          <p>At LeadPulse AI, accessible from our web platform, we prioritize the privacy of our visitors. This Privacy Policy outlines the types of information we collect and how we use it.</p>
+          <p><strong class="text-white">Information Collection:</strong> We collect business contact information from public directory indexes and search APIs to facilitate B2B sales development. We do not sell sensitive private personal consumer data.</p>
+          <p><strong class="text-white">Payment Information:</strong> All payments are processed securely through certified PCI-DSS compliant third-party payment gateways (Razorpay). We do not store your credit card, debit card, or UPI PINs on our servers.</p>
+          <p><strong class="text-white">Contact:</strong> If you have questions regarding our privacy practices, contact us at <span class="text-indigo-400">support@leadpulse.ai</span>.</p>
+        `
+      },
+      terms: {
+        title: 'Terms of Service',
+        content: `
+          <p class="font-semibold text-white">Last updated: October 2026</p>
+          <p>By accessing or using LeadPulse AI, you agree to be bound by these Terms of Service.</p>
+          <p><strong class="text-white">1. Service Delivery:</strong> LeadPulse AI provides instant downloadable CSV/Excel business directories. Upon successful payment verification via Razorpay, digital access is delivered instantly via direct browser download.</p>
+          <p><strong class="text-white">2. Acceptable Use:</strong> You agree to use the exported data in compliance with local commercial communication laws (such as CAN-SPAM and GDPR requirements for B2B legitimate interest).</p>
+          <p><strong class="text-white">3. Intellectual Property:</strong> The platform design, proprietary crawling algorithms, and user interface are protected by copyright laws.</p>
+        `
+      },
+      refund: {
+        title: 'Refund & Cancellation Policy',
+        content: `
+          <p class="font-semibold text-white">Last updated: October 2026</p>
+          <p><strong class="text-white">Digital Goods Policy:</strong> Because our datasets are delivered as instant digital downloads (.CSV format), orders are generally non-refundable once the file has been successfully downloaded.</p>
+          <p><strong class="text-white">Defective Dataset Guarantee:</strong> If you experience any technical download failure, duplicate billing, or if more than 30% of contacts in a purchased set are unverifiable, you are entitled to a full refund within <strong class="text-white">48 hours</strong> of purchase.</p>
+          <p>To request a refund, simply email <span class="text-indigo-400">refunds@leadpulse.ai</span> with your Razorpay Payment ID. Verified refunds are credited to the original payment source within 5-7 business days.</p>
+        `
+      },
+      contact: {
+        title: 'Contact Us',
+        content: `
+          <p class="font-semibold text-white">Need help or have questions? Get in touch with our team:</p>
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
+            <div><strong class="text-white">Entity Name:</strong> LeadPulse AI</div>
+            <div><strong class="text-white">Customer Support Email:</strong> support@leadpulse.ai</div>
+            <div><strong class="text-white">Billing Queries:</strong> billing@leadpulse.ai</div>
+            <div><strong class="text-white">Support Hours:</strong> Monday – Saturday, 9:00 AM – 7:00 PM IST</div>
+            <div><strong class="text-white">Response Time:</strong> Within 12-24 business hours</div>
+          </div>
+        `
+      }
+    };
+
+    function openPolicy(type) {
+      const p = POLICIES[type];
+      if (!p) return;
+      document.getElementById('policyModalTitle').innerText = p.title;
+      document.getElementById('policyModalBody').innerHTML = p.content;
+      document.getElementById('policyModal').classList.remove('hidden');
+    }
+
+    function closePolicyModal() {
+      document.getElementById('policyModal').classList.add('hidden');
+    }
+  </script>
+    async function verifyAndDownload(payload) {
+      try {
+        const res = await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          closeUnlockModal();
+
+          confetti({
+            particleCount: 120,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+
+          const banner = document.getElementById('downloadBanner');
+          banner.classList.remove('hidden');
+
+          // Auto-trigger file download only after verified payment
+          window.location.href = data.downloadUrl;
+
+          setTimeout(() => {
+            banner.classList.add('hidden');
+          }, 6000);
+        } else {
+          alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
+        }
+      } catch (err) {
+        alert('Network error while verifying payment.');
+      }
+    }
+  </script>
+</body>
+</html>
