@@ -62,6 +62,28 @@ const GLOBAL_SECTORS = {
     'Beverly Hills Los Angeles', 'Santa Monica Los Angeles', 'Downtown Los Angeles', 'Pasadena Los Angeles'
   ],
 
+  // Canada (Toronto, Vancouver, Montreal, Calgary)
+  canada: [
+    'Downtown Toronto', 'Bay Street Toronto', 'North York Toronto', 'Mississauga Ontario', 
+    'Downtown Vancouver', 'Robson Vancouver', 'Richmond BC', 'Calgary Downtown'
+  ],
+  toronto: [
+    'Downtown Toronto', 'Financial District Toronto', 'Bay Street Toronto', 'North York Toronto', 'Scarborough'
+  ],
+  vancouver: [
+    'Downtown Vancouver', 'Robson Vancouver', 'West End Vancouver', 'Yaletown Vancouver'
+  ],
+
+  // United Kingdom (London, Manchester, Birmingham)
+  uk: [
+    'City of London', 'Canary Wharf London', 'Westminster London', 'Mayfair London', 
+    'Camden London', 'Manchester City Centre', 'Birmingham Central'
+  ],
+  london: [
+    'City of London', 'Canary Wharf London', 'Westminster London', 'Mayfair London', 
+    'Kensington London', 'Camden London', 'Islington London', 'Soho London'
+  ],
+
   // Australia (Sydney, Melbourne, Brisbane, Perth)
   australia: [
     'CBD Sydney', 'Bondi Sydney', 'Parramatta Sydney', 'Surry Hills Sydney', 
@@ -114,6 +136,12 @@ function detectCountry(city, query) {
   }
   if (text.includes('australia') || text.includes('sydney') || text.includes('melbourne') || text.includes('brisbane') || text.includes('perth') || text.includes('queensland')) {
     return { name: 'Australia', code: 'AU', phonePrefix: '+61 4' + Math.floor(10000000 + Math.random() * 89999999).toString().slice(0, 8), currency: 'AUD', flag: '🇦🇺' };
+  }
+  if (text.includes('canada') || text.includes('toronto') || text.includes('vancouver') || text.includes('montreal') || text.includes('calgary') || text.includes('ontario')) {
+    return { name: 'Canada', code: 'CA', phonePrefix: `+1 (416) ${Math.floor(200 + Math.random() * 700)}-${Math.floor(1000 + Math.random() * 9000)}`, currency: 'CAD', flag: '🇨🇦' };
+  }
+  if (text.includes('uk') || text.includes('london') || text.includes('manchester') || text.includes('birmingham') || text.includes('england') || text.includes('united kingdom')) {
+    return { name: 'United Kingdom', code: 'GB', phonePrefix: `+44 20 ${Math.floor(7000 + Math.random() * 2999)} ${Math.floor(1000 + Math.random() * 9000)}`, currency: 'GBP', flag: '🇬🇧' };
   }
   // Default India if Indian cities or generic
   const isIndia = text.includes('delhi') || text.includes('mumbai') || text.includes('bangalore') || text.includes('gurgaon') || text.includes('noida') || text.includes('pune') || text.includes('hyderabad') || text.includes('chennai') || text.includes('india');
@@ -229,6 +257,7 @@ function generateUniversalHighDensityLeads(category, city, country, count, start
   const catLower = category.toLowerCase();
   
   const isRealEstate = /real\s*estate|property|realtor|broker|agent|advisor|wealth/i.test(catLower);
+  const isImmigration = /immigrat|visa|relocat|citizenship|pr\s*advisor|foreign\s*worker|green\s*card/i.test(catLower);
   const isLegal = /lawyer|attorney|legal|advocate|law\s*firm/i.test(catLower);
   const isSolarRoofing = /solar|roof|contractor|construction|builder|hvac/i.test(catLower);
   const isMedSpa = /med\s*spa|spa|aesthetic|botox|skin|cosmetic|dentist|dental|clinic/i.test(catLower);
@@ -237,7 +266,10 @@ function generateUniversalHighDensityLeads(category, city, country, count, start
   let pList = ['Premier', 'Apex', 'Prime', 'Metro', 'Royal', 'Elite', 'Vanguard', 'Precision', 'Signature', 'Imperial', 'Central', 'Horizon', 'Global', 'Summit', 'Direct'];
   let sList = ['Group', 'Associates', 'Solutions', 'Partners', 'Center', 'Studio', 'Hub', 'Services', 'Network', 'Consultants', 'Enterprises'];
 
-  if (isRealEstate) {
+  if (isImmigration) {
+    pList = ['Vanguard Immigration', 'Apex Global Visas', 'Prime Relocation', 'Summit Citizenship', 'Sterling Immigration', 'Beacon Visas', 'Capital Relocation', 'Gateway Global', 'Continental Visas', 'First Choice Immigration'];
+    sList = ['Immigration Law Firm', 'Visa & Relocation Advisors', 'Global Mobility Partners', 'Citizenship Consultants', 'Immigration Chambers', 'PR & Visa Associates'];
+  } else if (isRealEstate) {
     pList = ['Prestige', 'Apex Luxury', 'Prime Capital', 'Signature', 'Vanguard', 'Sotheby', 'First Choice', 'Imperial', 'Horizon', 'Golden Key', 'Metropolitan', 'Compass', 'Crown', 'Elite Global', 'Summit'];
     sList = ['Realty Group', 'Real Estate Advisors', 'Property Partners', 'Luxury Estates', 'Asset Advisors', 'Real Estate Brokerage', 'Homes & Living', 'Investments', 'Commercial Realty', 'Associates'];
   } else if (isLegal) {
@@ -257,12 +289,16 @@ function generateUniversalHighDensityLeads(category, city, country, count, start
   const uaeStreets = ['Sheikh Zayed Road', 'Downtown Boulevard', 'Marina Walk', 'Al Khaleej Al Tejari Street', 'Al Saada Street', 'King Salman Bin Abdulaziz Al Saud St'];
   const usaStreets = ['Brickell Avenue', '5th Avenue', 'Ocean Drive', 'Wilshire Boulevard', 'Michigan Avenue', 'Broadway', 'Collins Avenue'];
   const ausStreets = ['George Street', 'Collins Street', 'Queen Street Mall', 'Pitt Street', 'Flinders Lane', 'Eagle Street Pier'];
+  const canStreets = ['Bay Street', 'Yonge Street', 'King Street West', 'Robson Street', 'Burrard Street', 'University Avenue'];
+  const ukStreets = ['Canary Wharf', 'Bishopsgate', 'Oxford Street', 'Regent Street', 'Fleet Street', 'Piccadilly', 'Victoria Street'];
   const indStreets = ['MG Road', 'Golf Course Road', 'Barakhamba Road', 'Linking Road', 'Indiranagar 100ft Road', 'Outer Ring Road'];
 
   let streets = indStreets;
   if (country.code === 'AE') streets = uaeStreets;
   else if (country.code === 'US') streets = usaStreets;
   else if (country.code === 'AU') streets = ausStreets;
+  else if (country.code === 'CA') streets = canStreets;
+  else if (country.code === 'GB') streets = ukStreets;
 
   const extra = [];
   for (let i = 1; i <= count; i++) {
