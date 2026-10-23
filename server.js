@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
+const { generateMegaBundleLeads, getMegaBundlePreview, getMegaBundleStats } = require('./megaBundleGenerator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -388,23 +389,62 @@ app.post('/api/search', async (req, res) => {
   });
 });
 
-// 2. Create Razorpay Payment Order Endpoint
-app.post('/api/create-order', async (req, res) => {
-  const { searchId } = req.body;
-  if (!searchId || !searchCache.has(searchId)) {
-    return res.status(400).json({ error: 'Invalid or expired search session.' });
+// 1.5. Special Limited 4,000+ Multi-Category Mega Bundle Info Endpoint
+app.get('/api/bundle-info', (req, res) => {
+  try {
+    const stats = getMegaBundleStats();
+    const preview = getMegaBundlePreview(8);
+    res.json({
+      success: true,
+      stats,
+      preview
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch bundle info: ' + err.message });
   }
+});
 
-  const amountInPaise = 49900; // ₹499.00 in paise
+// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹499 & 4,000+ Mega Bundle ₹799)
+app.post('/api/create-order', async (req, res) => {
+  const { searchId, bundleType } = req.body;
+  const isMegaBundle = bundleType === 'mega_4000';
+
+  let activeSessionId = searchId;
+  let amountInPaise = 49900; // ₹499 default
+  let orderDescription = 'LeadPulse B2B Leads Export';
+
+  if (isMegaBundle) {
+    amountInPaise = 79900; // ₹799.00 in paise
+    activeSessionId = `mega_4000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    orderDescription = 'LeadPulse 4,000+ Multi-Category Mega Pack (₹799)';
+
+    // Cache the mega bundle dataset under activeSessionId
+    const megaLeads = generateMegaBundleLeads();
+    searchCache.set(activeSessionId, {
+      isBundle: true,
+      bundleType: 'mega_4000',
+      query: '4,000+ Global High-Ticket B2B Mega Vault',
+      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+      country: 'Global',
+      totalCount: megaLeads.length,
+      leads: megaLeads,
+      createdAt: Date.now()
+    });
+  } else {
+    if (!searchId || !searchCache.has(searchId)) {
+      return res.status(400).json({ error: 'Invalid or expired search session.' });
+    }
+  }
 
   if (isRealRazorpay && razorpay) {
     try {
       const order = await razorpay.orders.create({
         amount: amountInPaise,
         currency: 'INR',
-        receipt: searchId,
+        receipt: activeSessionId.slice(0, 40),
         notes: {
-          service: 'LeadPulse B2B Leads Export'
+          service: orderDescription,
+          isBundle: isMegaBundle ? 'true' : 'false'
         }
       });
       return res.json({
@@ -412,7 +452,9 @@ app.post('/api/create-order', async (req, res) => {
         orderId: order.id,
         amount: order.amount,
         currency: order.currency,
-        keyId: razorpayKeyId
+        keyId: razorpayKeyId,
+        sessionId: activeSessionId,
+        isBundle: isMegaBundle
       });
     } catch (err) {
       console.error('Razorpay Order Creation Error:', err);
@@ -425,7 +467,9 @@ app.post('/api/create-order', async (req, res) => {
     orderId: `order_demo_${Date.now()}`,
     amount: amountInPaise,
     currency: 'INR',
-    keyId: razorpayKeyId
+    keyId: razorpayKeyId,
+    sessionId: activeSessionId,
+    isBundle: isMegaBundle
   });
 });
 
@@ -518,7 +562,9 @@ app.get('/api/download-csv', (req, res) => {
   // Prepend UTF-8 Byte Order Mark (\uFEFF) so Excel opens clean columns automatically
   const BOM = '\uFEFF';
   const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
-  const filename = `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory.csv`;
+  const filename = searchData.isBundle
+    ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records.csv`
+    : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory.csv`;
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
