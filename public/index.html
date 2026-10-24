@@ -765,16 +765,62 @@
     </div>
   </div>
 
-  <!-- Success Notification Floating Banner -->
-  <div id="downloadBanner" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900 border border-emerald-500/40 p-4 rounded-2xl shadow-2xl shadow-emerald-950/60 max-w-sm flex items-start gap-3">
-    <div class="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+  <!-- Success Notification Floating Banner (Positioned Cleanly On The Side) -->
+  <div id="downloadBanner" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900/98 border border-emerald-500/50 p-5 rounded-2xl shadow-2xl shadow-emerald-950/80 max-w-sm w-full backdrop-blur transition-all">
+    <div class="flex items-start justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+        <div>
+          <h5 class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>Payment Verified!</span>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-1.5 py-0.5 rounded-full border border-emerald-500/30">Success</span>
+          </h5>
+          <p class="text-[11px] text-slate-300 mt-0.5">Your verified leads spreadsheet has started downloading automatically.</p>
+        </div>
+      </div>
+      <button onclick="document.getElementById('downloadBanner').classList.add('hidden')" class="text-slate-400 hover:text-white p-1 rounded-lg transition shrink-0" title="Close">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
     </div>
-    <div>
-      <h5 class="text-sm font-bold text-white">Payment Verified!</h5>
-      <p class="text-xs text-slate-400 mt-0.5">Your full verified directory spreadsheet has started downloading automatically.</p>
+
+    <!-- Direct Fallback Download Button -->
+    <div class="mt-3 pt-3 border-t border-slate-800">
+      <a id="manualDownloadLink" href="#" class="w-full py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-md transition">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <span>Download Didn't Start? Click Here</span>
+      </a>
+    </div>
+
+    <!-- Instagram DM Direct Help Note -->
+    <div class="mt-2.5 p-2.5 rounded-xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-amber-500/10 border border-pink-500/20 text-[11px] text-slate-300">
+      <div class="flex items-center gap-1.5 text-pink-400 font-bold mb-1">
+        <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        <span>Instant Instagram DM Support</span>
+      </div>
+      <p class="text-slate-300 leading-snug">
+        If any problem comes, just DM me on Instagram <a href="https://instagram.com/hlocaptions" target="_blank" rel="noopener noreferrer" class="text-pink-400 font-bold hover:underline">@hlocaptions</a> &mdash; send your payment screenshot and I will send the CSV file directly to you!
+      </p>
     </div>
   </div>
+
+  <!-- Persistent Floating Side Support Pill (On the Side - Bottom-Right) -->
+  <a 
+    href="https://instagram.com/hlocaptions" 
+    target="_blank" 
+    rel="noopener noreferrer" 
+    class="fixed bottom-6 right-6 z-40 bg-slate-900/95 hover:bg-slate-800 border border-pink-500/40 hover:border-pink-500/80 px-3.5 py-2 rounded-full shadow-xl shadow-pink-950/40 backdrop-blur flex items-center gap-2.5 group transition-all duration-300 hover:scale-105"
+    title="Any problem or question? Just DM me on Instagram @hlocaptions"
+  >
+    <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 flex items-center justify-center text-white shrink-0 shadow-sm">
+      <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+    </div>
+    <div class="text-left">
+      <div class="text-[10px] text-pink-400 font-bold uppercase tracking-wider leading-none">Need Help?</div>
+      <div class="text-xs font-semibold text-white group-hover:text-pink-300 transition leading-tight mt-0.5">DM @hlocaptions</div>
+    </div>
+  </a>
 
   <!-- Live Real-Time Purchase Activity Toast (Bottom-Left) -->
   <div id="liveActivityToast" class="hidden fixed bottom-6 left-6 z-40 bg-slate-900/95 border border-slate-700/80 p-3.5 rounded-2xl shadow-2xl backdrop-blur flex items-center gap-3 max-w-sm transition-all duration-500 transform translate-y-4 opacity-0">
@@ -814,6 +860,10 @@
         &copy; 2026 <span class="text-white font-semibold">LeadPulse AI</span>. All rights reserved. Global B2B Lead Engine (USA, UAE, Australia & India).
       </div>
       <div class="flex items-center gap-4 sm:gap-6 flex-wrap justify-center font-medium">
+        <a href="https://instagram.com/hlocaptions" target="_blank" rel="noopener noreferrer" class="text-pink-400 hover:text-pink-300 flex items-center gap-1.5 transition font-semibold">
+          <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          <span>DM @hlocaptions</span>
+        </a>
         <button type="button" onclick="openPolicy('privacy')" class="hover:text-indigo-400 transition">Privacy Policy</button>
         <button type="button" onclick="openPolicy('terms')" class="hover:text-indigo-400 transition">Terms of Service</button>
         <button type="button" onclick="openPolicy('refund')" class="hover:text-indigo-400 transition">Refund & Cancellation</button>
@@ -1058,13 +1108,15 @@
           });
 
           const banner = document.getElementById('downloadBanner');
-          banner.classList.remove('hidden');
+          const manualBtn = document.getElementById('manualDownloadLink');
+          if (manualBtn && data.downloadUrl) {
+            manualBtn.href = data.downloadUrl;
+          }
+          if (banner) {
+            banner.classList.remove('hidden');
+          }
 
           window.location.href = data.downloadUrl;
-
-          setTimeout(() => {
-            banner.classList.add('hidden');
-          }, 7000);
         } else {
           alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
         }
@@ -1140,6 +1192,7 @@
           <p class="font-semibold text-white">Need help or have questions? Get in touch with our team:</p>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-2">
             <div><strong class="text-white">Entity Name:</strong> LeadPulse AI</div>
+            <div><strong class="text-white">Direct Instagram Support:</strong> <a href="https://instagram.com/hlocaptions" target="_blank" rel="noopener noreferrer" class="text-pink-400 font-bold hover:underline">@hlocaptions</a> (DM me directly for instant help)</div>
             <div><strong class="text-white">Customer Support Email:</strong> support@leadpulse.ai</div>
             <div><strong class="text-white">Billing Queries:</strong> billing@leadpulse.ai</div>
             <div><strong class="text-white">Support Hours:</strong> Monday – Saturday, 9:00 AM – 7:00 PM IST</div>
