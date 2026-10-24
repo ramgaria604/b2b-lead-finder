@@ -752,7 +752,7 @@
       </div>
 
       <!-- Order Summary Card -->
-      <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 mb-5 space-y-2 text-sm">
+      <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 mb-4 space-y-2 text-sm">
         <div class="flex justify-between text-slate-300">
           <span id="modalDatasetLabel">100+ Leads Dataset</span>
           <span id="modalDatasetAmount" class="text-white font-semibold">₹499.00</span>
@@ -765,10 +765,38 @@
           <span>Supported Methods</span>
           <span class="text-indigo-400 font-medium">GPay, PhonePe, Paytm, Cards, NetBanking</span>
         </div>
+        <div id="couponDiscountRow" class="hidden flex justify-between text-xs text-emerald-400 font-medium pt-1.5 border-t border-slate-800/60">
+          <span id="couponDiscountLabel" class="flex items-center gap-1">🎁 Promo Discount</span>
+          <span id="couponDiscountAmount">-₹789.00</span>
+        </div>
         <div class="border-t border-slate-800 pt-2 flex justify-between font-bold text-white text-base">
           <span>Amount to Pay</span>
           <span id="modalDatasetTotal" class="text-emerald-400">₹499 (or $5.99)</span>
         </div>
+      </div>
+
+      <!-- Coupon / Promo Code Input Box -->
+      <div class="mb-5">
+        <div class="flex items-center gap-2">
+          <div class="relative flex-1">
+            <input 
+              type="text" 
+              id="couponInput" 
+              placeholder="Promo / Secret Code" 
+              class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-xl px-3.5 py-2.5 text-xs text-white uppercase tracking-wider placeholder-slate-500 outline-none transition"
+              onkeydown="if(event.key==='Enter') applyCouponCode()"
+            />
+          </div>
+          <button 
+            type="button" 
+            id="applyCouponBtn"
+            onclick="applyCouponCode()" 
+            class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white font-bold text-xs rounded-xl border border-slate-700/80 transition cursor-pointer shrink-0"
+          >
+            Apply
+          </button>
+        </div>
+        <div id="couponMessage" class="hidden text-[11px] mt-1.5 font-medium px-1"></div>
       </div>
 
       <!-- Payment Button -->
@@ -905,6 +933,91 @@
     let currentSearchId = null;
     let currentSearchData = null;
     let activeCheckoutType = 'search'; // 'search' or 'mega_4000'
+    let appliedCouponCode = null;
+    let appliedCouponData = null;
+
+    function resetCouponState() {
+      appliedCouponCode = null;
+      appliedCouponData = null;
+      const input = document.getElementById('couponInput');
+      if (input) input.value = '';
+      const msg = document.getElementById('couponMessage');
+      if (msg) {
+        msg.innerText = '';
+        msg.classList.add('hidden');
+      }
+      const row = document.getElementById('couponDiscountRow');
+      if (row) row.classList.add('hidden');
+    }
+
+    async function applyCouponCode() {
+      const input = document.getElementById('couponInput');
+      const msg = document.getElementById('couponMessage');
+      const applyBtn = document.getElementById('applyCouponBtn');
+      const rawCode = input ? input.value.trim() : '';
+
+      if (!rawCode) {
+        msg.innerText = 'Please enter a coupon code.';
+        msg.className = 'text-[11px] mt-1.5 font-medium text-amber-400 px-1';
+        msg.classList.remove('hidden');
+        return;
+      }
+
+      applyBtn.disabled = true;
+      applyBtn.innerText = '...';
+
+      try {
+        const res = await fetch('/api/validate-coupon', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: rawCode,
+            bundleType: activeCheckoutType
+          })
+        });
+
+        const data = await res.json();
+        applyBtn.disabled = false;
+        applyBtn.innerText = 'Apply';
+
+        if (res.ok && data.success) {
+          appliedCouponCode = data.code;
+          appliedCouponData = data;
+
+          msg.innerHTML = `✅ <strong>${data.code}</strong> applied! Final: <strong>₹${data.finalPriceINR}</strong> (You save ₹${data.discountINR})`;
+          msg.className = 'text-[11px] mt-1.5 font-medium text-emerald-400 px-1';
+          msg.classList.remove('hidden');
+
+          const row = document.getElementById('couponDiscountRow');
+          if (row) {
+            row.classList.remove('hidden');
+            document.getElementById('couponDiscountAmount').innerText = `-₹${data.discountINR}.00`;
+          }
+
+          document.getElementById('modalDatasetTotal').innerHTML = `<span class="line-through text-slate-500 text-xs mr-1 font-normal">₹${data.originalPriceINR}</span> <span class="text-emerald-400 font-extrabold text-lg">₹${data.finalPriceINR}</span>`;
+          document.getElementById('payBtnText').innerText = `Pay ₹${data.finalPriceINR} to Unlock & Export`;
+        } else {
+          appliedCouponCode = null;
+          appliedCouponData = null;
+          const row = document.getElementById('couponDiscountRow');
+          if (row) row.classList.add('hidden');
+
+          const basePrice = (activeCheckoutType === 'mega_4000') ? '₹799' : '₹499';
+          document.getElementById('modalDatasetTotal').innerText = `${basePrice} (or $${activeCheckoutType === 'mega_4000' ? '9.60' : '5.99'})`;
+          document.getElementById('payBtnText').innerText = `Pay ${basePrice} to Unlock & Export`;
+
+          msg.innerText = `❌ ${data.error || 'Invalid or expired coupon.'}`;
+          msg.className = 'text-[11px] mt-1.5 font-medium text-rose-400 px-1';
+          msg.classList.remove('hidden');
+        }
+      } catch (err) {
+        applyBtn.disabled = false;
+        applyBtn.innerText = 'Apply';
+        msg.innerText = 'Network error verifying coupon.';
+        msg.className = 'text-[11px] mt-1.5 font-medium text-rose-400 px-1';
+        msg.classList.remove('hidden');
+      }
+    }
     let megaBundleData = null;
 
     function setQuickSearch(niche, city) {
@@ -1011,6 +1124,7 @@
 
     function openMegaBundleModal() {
       activeCheckoutType = 'mega_4000';
+      resetCouponState();
       document.getElementById('modalDatasetTitle').innerText = 'Unlock 4,000+ Global B2B Mega Vault';
       document.getElementById('modalDatasetSubtitle').innerText = 'Limited Offer: ₹799 (Increases to ₹1,199 after 28 Oct). 4,250 Leads refreshed every 2 weeks.';
       document.getElementById('modalDatasetLabel').innerText = '4,000+ Multi-Category Mega Directory';
@@ -1026,6 +1140,7 @@
 
     function openUnlockModal() {
       activeCheckoutType = 'search';
+      resetCouponState();
       if (!currentSearchData) return;
       document.getElementById('modalDatasetTitle').innerText = 'Unlock Full Dataset';
       document.getElementById('modalDatasetSubtitle').innerText = `Complete ${currentSearchData.totalCount} ${currentSearchData.query} in ${currentSearchData.city} dataset.`;
@@ -1059,8 +1174,8 @@
       try {
         const isMega = activeCheckoutType === 'mega_4000';
         const reqBody = isMega 
-          ? { bundleType: 'mega_4000' }
-          : { searchId: currentSearchId };
+          ? { bundleType: 'mega_4000', couponCode: appliedCouponCode }
+          : { searchId: currentSearchId, couponCode: appliedCouponCode };
 
         const orderRes = await fetch('/api/create-order', {
           method: 'POST',

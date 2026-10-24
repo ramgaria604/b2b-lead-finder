@@ -389,6 +389,83 @@ app.post('/api/search', async (req, res) => {
   });
 });
 
+
+// --- Single-Use & Persistent Coupon System ---
+const COUPONS_FILE = path.join(__dirname, 'coupons.json');
+
+function getCoupons() {
+  try {
+    if (fs.existsSync(COUPONS_FILE)) {
+      return JSON.parse(fs.readFileSync(COUPONS_FILE, 'utf8'));
+    }
+  } catch (err) {
+    console.error('Error reading coupons.json:', err);
+  }
+  return {};
+}
+
+function saveCoupons(coupons) {
+  try {
+    fs.writeFileSync(COUPONS_FILE, JSON.stringify(coupons, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing coupons.json:', err);
+  }
+}
+
+function validateCoupon(rawCode, originalAmountINR) {
+  if (!rawCode) return null;
+  const code = String(rawCode).trim().toUpperCase();
+  const coupons = getCoupons();
+  const coupon = coupons[code];
+
+  if (!coupon) {
+    return { valid: false, error: 'Invalid coupon code.' };
+  }
+
+  if (coupon.maxUses && (coupon.timesUsed || 0) >= coupon.maxUses) {
+    return { valid: false, error: 'This exclusive single-use coupon has already been redeemed!' };
+  }
+
+  let finalPriceINR = originalAmountINR;
+  let discountINR = 0;
+
+  if (coupon.type === 'fixed_price') {
+    finalPriceINR = Math.max(1, coupon.finalPriceINR);
+    discountINR = Math.max(0, originalAmountINR - finalPriceINR);
+  } else if (coupon.type === 'flat') {
+    discountINR = coupon.discountAmount || 0;
+    finalPriceINR = Math.max(1, originalAmountINR - discountINR);
+  } else if (coupon.type === 'percent') {
+    discountINR = Math.round((originalAmountINR * (coupon.discountPercent || 0)) / 100);
+    finalPriceINR = Math.max(1, originalAmountINR - discountINR);
+  }
+
+  return {
+    valid: true,
+    code: coupon.code,
+    originalPriceINR: originalAmountINR,
+    discountINR,
+    finalPriceINR,
+    description: coupon.description || 'Coupon applied successfully'
+  };
+}
+
+function burnCoupon(rawCode, paymentId) {
+  if (!rawCode) return;
+  const code = String(rawCode).trim().toUpperCase();
+  const coupons = getCoupons();
+  if (coupons[code]) {
+    coupons[code].timesUsed = (coupons[code].timesUsed || 0) + 1;
+    coupons[code].usedBy = coupons[code].usedBy || [];
+    coupons[code].usedBy.push({
+      paymentId,
+      usedAt: new Date().toISOString()
+    });
+    saveCoupons(coupons);
+    console.log(`🔥 [COUPON BURNED] ${code} marked as redeemed by payment ${paymentId}`);
+  }
+}
+
 // 1.5. Special Limited 4,000+ Multi-Category Mega Bundle Info Endpoint
 app.get('/api/bundle-info', (req, res) => {
   try {
@@ -404,19 +481,53 @@ app.get('/api/bundle-info', (req, res) => {
   }
 });
 
+// 1.8. Validate Coupon Endpoint (Client Verification)
+app.post('/api/validate-coupon', (req, res) => {
+  const { code, bundleType } = req.body;
+  const isMega = bundleType === 'mega_4000';
+  const originalPriceINR = isMega ? 799 : 499;
+
+  const result = validateCoupon(code, originalPriceINR);
+  if (!result || !result.valid) {
+    return res.status(400).json({ success: false, error: result ? result.error : 'Invalid coupon code.' });
+  }
+
+  res.json({
+    success: true,
+    code: result.code,
+    originalPriceINR: result.originalPriceINR,
+    discountINR: result.discountINR,
+    finalPriceINR: result.finalPriceINR,
+    description: result.description
+  });
+});
+
 // 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹499 & 4,000+ Mega Bundle ₹799)
 app.post('/api/create-order', async (req, res) => {
-  const { searchId, bundleType } = req.body;
+  const { searchId, bundleType, couponCode } = req.body;
   const isMegaBundle = bundleType === 'mega_4000';
 
   let activeSessionId = searchId;
-  let amountInPaise = 49900; // ₹499 default
-  let orderDescription = 'LeadPulse B2B Leads Export';
+  let baseAmountINR = isMegaBundle ? 799 : 499;
+  let finalAmountINR = baseAmountINR;
+  let appliedCouponCode = null;
+
+  if (couponCode) {
+    const val = validateCoupon(couponCode, baseAmountINR);
+    if (!val || !val.valid) {
+      return res.status(400).json({ error: val ? val.error : 'Invalid or expired coupon code.' });
+    }
+    finalAmountINR = val.finalPriceINR;
+    appliedCouponCode = val.code;
+  }
+
+  let amountInPaise = Math.round(finalAmountINR * 100);
+  let orderDescription = isMegaBundle
+    ? `LeadPulse 4,000+ Mega Vault (₹${finalAmountINR})`
+    : `LeadPulse B2B Leads Export (₹${finalAmountINR})`;
 
   if (isMegaBundle) {
-    amountInPaise = 79900; // ₹799.00 in paise
     activeSessionId = `mega_4000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-    orderDescription = 'LeadPulse 4,000+ Multi-Category Mega Pack (₹799)';
 
     // Cache the mega bundle dataset under activeSessionId
     const megaLeads = generateMegaBundleLeads();
@@ -428,12 +539,15 @@ app.post('/api/create-order', async (req, res) => {
       country: 'Global',
       totalCount: megaLeads.length,
       leads: megaLeads,
+      appliedCoupon: appliedCouponCode,
       createdAt: Date.now()
     });
   } else {
     if (!searchId || !searchCache.has(searchId)) {
       return res.status(400).json({ error: 'Invalid or expired search session.' });
     }
+    const sData = searchCache.get(searchId);
+    sData.appliedCoupon = appliedCouponCode;
   }
 
   if (isRealRazorpay && razorpay) {
@@ -444,7 +558,9 @@ app.post('/api/create-order', async (req, res) => {
         receipt: activeSessionId.slice(0, 40),
         notes: {
           service: orderDescription,
-          isBundle: isMegaBundle ? 'true' : 'false'
+          isBundle: isMegaBundle ? 'true' : 'false',
+          appliedCoupon: appliedCouponCode || 'none',
+          finalPriceINR: String(finalAmountINR)
         }
       });
       return res.json({
@@ -454,7 +570,9 @@ app.post('/api/create-order', async (req, res) => {
         currency: order.currency,
         keyId: razorpayKeyId,
         sessionId: activeSessionId,
-        isBundle: isMegaBundle
+        isBundle: isMegaBundle,
+        finalPriceINR: finalAmountINR,
+        appliedCoupon: appliedCouponCode
       });
     } catch (err) {
       console.error('Razorpay Order Creation Error:', err);
@@ -469,7 +587,9 @@ app.post('/api/create-order', async (req, res) => {
     currency: 'INR',
     keyId: razorpayKeyId,
     sessionId: activeSessionId,
-    isBundle: isMegaBundle
+    isBundle: isMegaBundle,
+    finalPriceINR: finalAmountINR,
+    appliedCoupon: appliedCouponCode
   });
 });
 
@@ -504,6 +624,11 @@ app.post('/api/verify-payment', (req, res) => {
   const searchData = searchCache.get(searchId);
   searchData.unlocked = true;
   searchData.downloadToken = token;
+
+  // Single-use burn protection: if a coupon was used, mark it as redeemed on successful payment
+  if (searchData.appliedCoupon) {
+    burnCoupon(searchData.appliedCoupon, razorpay_payment_id);
+  }
 
   res.json({
     success: true,
