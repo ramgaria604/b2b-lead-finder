@@ -1233,6 +1233,30 @@
       }
     }
 
+    async function triggerClientDownload(downloadUrl) {
+      try {
+        const res = await fetch(downloadUrl);
+        if (!res.ok) {
+          throw new Error('Download request failed with status ' + res.status);
+        }
+        const blob = await res.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = 'LeadPulse_4000_Global_Mega_Directory.csv';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(blobUrl);
+        }, 3000);
+      } catch (err) {
+        console.warn('Blob fetch failed, falling back to location.href:', err);
+        window.location.href = downloadUrl;
+      }
+    }
+
     async function verifyAndDownload(payload) {
       try {
         const res = await fetch('/api/verify-payment', {
@@ -1255,12 +1279,17 @@
           const manualBtn = document.getElementById('manualDownloadLink');
           if (manualBtn && data.downloadUrl) {
             manualBtn.href = data.downloadUrl;
+            manualBtn.onclick = function(e) {
+              e.preventDefault();
+              triggerClientDownload(data.downloadUrl);
+            };
           }
           if (banner) {
             banner.classList.remove('hidden');
           }
 
-          window.location.href = data.downloadUrl;
+          // Trigger rock-solid client-side buffered download
+          await triggerClientDownload(data.downloadUrl);
         } else {
           alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
         }

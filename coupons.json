@@ -2,11 +2,11 @@
   "TEST-NIKHIL-9284X": {
     "code": "TEST-NIKHIL-9284X",
     "type": "fixed_price",
-    "finalPriceINR": 10,
-    "maxUses": 1,
+    "finalPriceINR": 1,
+    "maxUses": 25,
     "timesUsed": 0,
     "usedBy": [],
-    "createdAt": "2026-10-24T15:40:00.000Z",
-    "description": "Exclusive Nikhil Live Test - Flat ₹10 Single Use"
+    "createdAt": "2026-10-24T16:00:00.000Z",
+    "description": "Nikhil Live Test Pass - Flat \u20b91 (Multi-Use for Testing)"
   }
 }

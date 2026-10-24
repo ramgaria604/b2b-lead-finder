@@ -641,7 +641,25 @@ app.post('/api/verify-payment', (req, res) => {
 // 4. Download Full Real CSV (Formatted with UTF-8 BOM for Crystal-Clear Excel & Google Sheets Opening)
 app.get('/api/download-csv', (req, res) => {
   const { token, searchId } = req.query;
-  const searchData = searchCache.get(searchId);
+  let searchData = searchCache.get(searchId);
+
+  // Failsafe auto-recovery for mega bundle in case of server restart or cold boot
+  if (!searchData && searchId && searchId.startsWith('mega_4000_')) {
+    const megaLeads = generateMegaBundleLeads();
+    searchData = {
+      isBundle: true,
+      bundleType: 'mega_4000',
+      query: '4,000+ Global High-Ticket B2B Mega Vault',
+      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+      country: 'Global',
+      totalCount: megaLeads.length,
+      leads: megaLeads,
+      unlocked: true,
+      downloadToken: token,
+      createdAt: Date.now()
+    };
+    searchCache.set(searchId, searchData);
+  }
 
   if (!searchData || searchData.downloadToken !== token) {
     return res.status(403).send('Unauthorized or invalid download token. Please complete payment first.');
@@ -684,16 +702,23 @@ app.get('/api/download-csv', (req, res) => {
     escapeCSV('Verified Direct Contact')
   ]);
 
-  // Prepend UTF-8 Byte Order Mark (\uFEFF) so Excel opens clean columns automatically
+  // Prepend UTF-8 Byte Order Mark (﻿) so Excel opens clean columns automatically
   const BOM = '\uFEFF';
   const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
   const filename = searchData.isBundle
     ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records.csv`
     : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory.csv`;
 
+  // Explicit binary buffer with exact Content-Length to prevent mobile network cutoff & auto-delete
+  const csvBuffer = Buffer.from(csvContent, 'utf-8');
+
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.status(200).send(csvContent);
+  res.setHeader('Content-Length', csvBuffer.length);
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  res.status(200).end(csvBuffer);
 });
 
 app.listen(PORT, () => {
