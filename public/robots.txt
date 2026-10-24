@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://b2b-lead-finder-1.onrender.com/sitemap.xml
