@@ -402,6 +402,20 @@ app.post('/api/search', async (req, res) => {
 
 
 // --- Single-Use & Persistent Coupon System ---
+
+// Rotating offset for ₹20 Starter Pack (50 unique leads replaced after every purchase)
+let starterBatchOffset = 0;
+function getNext50StarterLeads() {
+  const all = generateMegaBundleLeads();
+  const batchSize = 50;
+  const currentOffset = starterBatchOffset % (all.length - batchSize);
+  starterBatchOffset = (starterBatchOffset + batchSize) % (all.length - batchSize);
+  
+  const leads = all.slice(currentOffset, currentOffset + batchSize);
+  console.log(`[STARTER PACK ROTATION] Dispatched 50 unique leads from offset ${currentOffset} to ${currentOffset + batchSize}. Next offset: ${starterBatchOffset}`);
+  return leads;
+}
+
 const COUPONS_FILE = path.join(__dirname, 'coupons.json');
 
 function getCoupons() {
@@ -496,7 +510,8 @@ app.get('/api/bundle-info', (req, res) => {
 app.post('/api/validate-coupon', (req, res) => {
   const { code, bundleType } = req.body;
   const isMega = bundleType === 'mega_4000';
-  const originalPriceINR = isMega ? 249 : 149;
+  const isStarter = bundleType === 'starter_50';
+  const originalPriceINR = isMega ? 249 : (isStarter ? 20 : 149);
 
   const result = validateCoupon(code, originalPriceINR);
   if (!result || !result.valid) {
@@ -517,9 +532,10 @@ app.post('/api/validate-coupon', (req, res) => {
 app.post('/api/create-order', async (req, res) => {
   const { searchId, bundleType, couponCode } = req.body;
   const isMegaBundle = bundleType === 'mega_4000';
+  const isStarterPack = bundleType === 'starter_50';
 
   let activeSessionId = searchId;
-  let baseAmountINR = isMegaBundle ? 249 : 149;
+  let baseAmountINR = isMegaBundle ? 249 : (isStarterPack ? 20 : 149);
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 
@@ -535,9 +551,25 @@ app.post('/api/create-order', async (req, res) => {
   let amountInPaise = Math.round(finalAmountINR * 100);
   let orderDescription = isMegaBundle
     ? `LeadPulse 4,000+ Mega Vault (₹${finalAmountINR})`
-    : `LeadPulse B2B Leads Export (₹${finalAmountINR})`;
+    : (isStarterPack 
+        ? `LeadPulse 50 Starter Leads (₹${finalAmountINR})` 
+        : `LeadPulse B2B Leads Export (₹${finalAmountINR})`);
 
-  if (isMegaBundle) {
+  if (isStarterPack) {
+    activeSessionId = `starter_50_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    const starterLeads = getNext50StarterLeads();
+    searchCache.set(activeSessionId, {
+      isBundle: true,
+      bundleType: 'starter_50',
+      query: '50 Verified B2B Starter Leads',
+      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+      country: 'Global',
+      totalCount: starterLeads.length,
+      leads: starterLeads,
+      appliedCoupon: appliedCouponCode,
+      createdAt: Date.now()
+    });
+  } else if (isMegaBundle) {
     activeSessionId = `mega_4000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
     // Cache the mega bundle dataset under activeSessionId
@@ -645,35 +677,107 @@ app.post('/api/verify-payment', (req, res) => {
     success: true,
     message: 'Payment verified successfully! Access granted.',
     paymentId: razorpay_payment_id,
-    downloadUrl: `/api/download-csv?token=${token}&searchId=${searchId}`
+    downloadUrl: `/api/download-csv?token=${token}&searchId=${searchId}`,
+    downloadUrlXlsx: `/api/download-csv?token=${token}&searchId=${searchId}&format=xlsx`,
+    downloadUrlPdf: `/api/download-csv?token=${token}&searchId=${searchId}&format=pdf`
   });
 });
 
-// 4. Download Full Real CSV (Formatted with UTF-8 BOM for Crystal-Clear Excel & Google Sheets Opening)
+// 4. Download Full Leads (Supports CSV, real XLSX Excel, and PDF formats)
 app.get('/api/download-csv', (req, res) => {
-  const { token, searchId } = req.query;
+  const { token, searchId, format } = req.query;
   let searchData = searchCache.get(searchId);
 
-  // Failsafe auto-recovery for mega bundle in case of server restart or cold boot
-  if (!searchData && searchId && searchId.startsWith('mega_4000_')) {
-    const megaLeads = generateMegaBundleLeads();
-    searchData = {
-      isBundle: true,
-      bundleType: 'mega_4000',
-      query: '4,000+ Global High-Ticket B2B Mega Vault',
-      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
-      country: 'Global',
-      totalCount: megaLeads.length,
-      leads: megaLeads,
-      unlocked: true,
-      downloadToken: token,
-      createdAt: Date.now()
-    };
-    searchCache.set(searchId, searchData);
+  // Failsafe auto-recovery for mega bundle or starter pack in case of server restart
+  if (!searchData && searchId) {
+    if (searchId.startsWith('mega_4000_')) {
+      const megaLeads = generateMegaBundleLeads();
+      searchData = {
+        isBundle: true,
+        bundleType: 'mega_4000',
+        query: '4,000+ Global High-Ticket B2B Mega Vault',
+        city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+        country: 'Global',
+        totalCount: megaLeads.length,
+        leads: megaLeads,
+        unlocked: true,
+        downloadToken: token,
+        createdAt: Date.now()
+      };
+      searchCache.set(searchId, searchData);
+    } else if (searchId.startsWith('starter_50_')) {
+      const starterLeads = getNext50StarterLeads();
+      searchData = {
+        isBundle: true,
+        bundleType: 'starter_50',
+        query: '50 Verified B2B Starter Leads',
+        city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+        country: 'Global',
+        totalCount: starterLeads.length,
+        leads: starterLeads,
+        unlocked: true,
+        downloadToken: token,
+        createdAt: Date.now()
+      };
+      searchCache.set(searchId, searchData);
+    }
   }
 
   if (!searchData || searchData.downloadToken !== token) {
     return res.status(403).send('Unauthorized or invalid download token. Please complete payment first.');
+  }
+
+  const baseFilename = searchData.bundleType === 'starter_50'
+    ? 'LeadPulse_50_Starter_Leads_Rotated_Pack'
+    : (searchData.isBundle
+        ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records`
+        : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory`);
+
+  // --- Real Native Excel (.xlsx) Format ---
+  if (format === 'xlsx') {
+    const wb = XLSX.utils.book_new();
+    const wsData = [
+      ['Lead ID', 'Company / Agent Name', 'Category / Specialization', 'Direct Phone Number', 'Verified Email Address', 'Official Website', 'Street Address', 'City', 'Country / Region', 'Google Rating', 'Total Reviews', 'Verification Status'],
+      ...searchData.leads.map(l => [l.id, l.name, l.category, l.phone, l.email, l.website, l.address, l.city || searchData.city, l.country || searchData.country || 'Global', l.rating, l.reviewsCount, 'Verified Direct Contact'])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, 'Verified Leads');
+    const xlsxBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.xlsx"`);
+    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
+    return res.status(200).send(xlsxBuffer);
+  }
+
+  // --- Official Executive PDF Report Format ---
+  if (format === 'pdf') {
+    const doc = new PDFDocument({ margin: 36, size: 'A4' });
+    const chunks = [];
+    doc.on('data', c => chunks.push(c));
+    doc.on('end', () => {
+      const pdfBuffer = Buffer.concat(chunks);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.pdf"`);
+      res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
+      res.status(200).send(pdfBuffer);
+    });
+
+    doc.fontSize(18).fillColor('#0F172A').text('LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
+    doc.fontSize(10).fillColor('#64748B').text(`${searchData.leads.length} Verified Records - ${searchData.query}`, { align: 'center' });
+    doc.moveDown(1.5);
+
+    searchData.leads.forEach((lead, i) => {
+      doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
+      doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ★ ${lead.rating} (${lead.reviewsCount} reviews)`);
+      doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
+      doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
+      doc.fontSize(9).fillColor('#059669').text(`   Website: ${lead.website}`);
+      doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
+      doc.moveDown(0.8);
+    });
+
+    return doc.end();
   }
 
   // Professional headers with distinct columns for seamless sorting in Microsoft Excel / Sheets
@@ -729,122 +833,11 @@ app.get('/api/download-csv', (req, res) => {
   res.status(200).send(csvBuffer);
 });
 
-// 4.5. Free 10-Lead Sample CSV Route (Zero-Risk Proof of Real Data)
-
-// 4.6. Free Sample PDF Route (Opens seamlessly on 100% of mobile phones & PCs)
-app.get('/api/download-sample-pdf', (req, res) => {
-  try {
-    const sampleLeads = getMegaBundlePreview(10);
-    const doc = new PDFDocument({ margin: 36, size: 'A4' });
-    const chunks = [];
-
-    doc.on('data', chunk => chunks.push(chunk));
-    doc.on('end', () => {
-      const pdfBuffer = Buffer.concat(chunks);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', 'attachment; filename="LeadPulse_Sample_10_Verified_Leads.pdf"');
-      res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
-      res.status(200).send(pdfBuffer);
-    });
-
-    // Clean Executive Header
-    doc.fontSize(18).fillColor('#0F172A').text('LeadPulse AI - 10 Verified Sample Leads', { align: 'center' });
-    doc.fontSize(10).fillColor('#64748B').text('Executive B2B Directory (UAE, USA, Canada, UK, Australia & India)', { align: 'center' });
-    doc.moveDown(1.5);
-
-    sampleLeads.forEach((lead, i) => {
-      doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`, { underline: false });
-      doc.fontSize(9).fillColor('#D97706').text(`   Specialization: ${lead.category}  |  Google Rating: ★ ${lead.rating} (${lead.reviewsCount} reviews)`);
-      doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
-      doc.fontSize(9).fillColor('#1E293B').text(`   Verified Email: ${lead.email}`);
-      doc.fontSize(9).fillColor('#059669').text(`   Official Website: ${lead.website}`);
-      doc.fontSize(8).fillColor('#64748B').text(`   Street Location: ${lead.address}, ${lead.city}, ${lead.country || 'Global'}`);
-      doc.moveDown(0.8);
-    });
-
-    doc.end();
-  } catch (err) {
-    res.status(500).send('Error generating PDF sample: ' + err.message);
-  }
-});
-
-// 4.7. Free Sample Native Excel (.xlsx) Route
-app.get('/api/download-sample-xlsx', (req, res) => {
-  try {
-    const sampleLeads = getMegaBundlePreview(10);
-    const wb = XLSX.utils.book_new();
-    const wsData = [
-      ['Record ID', 'Company / Agent Name', 'Category', 'Direct Phone', 'Verified Email', 'Website', 'Address', 'City', 'Country', 'Rating', 'Reviews'],
-      ...sampleLeads.map(l => [l.id, l.name, l.category, l.phone, l.email, l.website, l.address, l.city, l.country || 'Global', l.rating, l.reviewsCount])
-    ];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(wb, ws, 'Sample Leads');
-    const xlsxBuf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
-
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', 'attachment; filename="LeadPulse_Sample_10_Verified_Leads.xlsx"');
-    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
-    res.status(200).send(xlsxBuf);
-  } catch (err) {
-    res.status(500).send('Error generating XLSX sample: ' + err.message);
-  }
-});
-
-app.get('/api/download-sample-csv', (req, res) => {
-  try {
-    const sampleLeads = getMegaBundlePreview(10);
-    const headers = [
-      'Record ID',
-      'Company / Agent Name',
-      'Category / Specialization',
-      'Direct Phone Number',
-      'Verified Email Address',
-      'Official Website',
-      'Street Address',
-      'City',
-      'Country / Region',
-      'Google Rating',
-      'Total Reviews',
-      'Verification Status'
-    ];
-
-    const escapeCSV = (val) => {
-      if (val === null || val === undefined) return '""';
-      const str = String(val).replace(/"/g, '""');
-      return `"${str}"`;
-    };
-
-    const headerLine = headers.map(escapeCSV).join(',');
-    const dataLines = sampleLeads.map(lead => [
-      escapeCSV(lead.id),
-      escapeCSV(lead.name),
-      escapeCSV(lead.category),
-      escapeCSV(lead.phone),
-      escapeCSV(lead.email),
-      escapeCSV(lead.website),
-      escapeCSV(lead.address),
-      escapeCSV(lead.city),
-      escapeCSV(lead.country || 'Global'),
-      escapeCSV(lead.rating),
-      escapeCSV(lead.reviewsCount),
-      escapeCSV('Verified Direct Contact (Free Sample)')
-    ].join(','));
-
-    // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers & Google Sheets open with 100% clean columns
-    const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
-    const csvBuffer = Buffer.concat([bom, Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8')]);
-    const filename = 'LeadPulse_Sample_10_Verified_Leads.csv';
-
-    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    // 'no-transform' prevents Cloudflare/reverse-proxy from re-compressing and causing browser size mismatch corruption
-    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
-    res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Expires', '0');
-    res.status(200).send(csvBuffer);
-  } catch (err) {
-    res.status(500).send('Error generating free sample CSV: ' + err.message);
-  }
+// 4.5. Free Direct Sample Downloads Phased Out (Protected - Micro Starter Pack ₹20 Replaces It)
+app.get(['/api/download-sample-pdf', '/api/download-sample-xlsx', '/api/download-sample-csv', '/api/download-sample'], (req, res) => {
+  res.status(403).json({
+    error: 'Free bulk download has been phased out. Get 50 fresh verified decision makers for just ₹20 (Excel, PDF & CSV included) on the homepage!'
+  });
 });
 
 app.listen(PORT, () => {
