@@ -11,12 +11,12 @@
   },
   "EDITOR50": {
     "code": "EDITOR50",
-    "type": "percent",
-    "discountPercent": 50,
+    "type": "flat",
+    "discountAmount": 50,
     "maxUses": 10,
     "timesUsed": 0,
     "usedBy": [],
     "createdAt": "2026-10-26T02:24:00.000Z",
-    "description": "Secret 50% Off Deal for Editor / DM Clients"
+    "description": "Secret Flat ₹50 Off Deal (₹499 -> ₹449)"
   }
 }
