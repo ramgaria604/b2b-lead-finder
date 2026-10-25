@@ -494,7 +494,7 @@ app.get('/api/bundle-info', (req, res) => {
 app.post('/api/validate-coupon', (req, res) => {
   const { code, bundleType } = req.body;
   const isMega = bundleType === 'mega_4000';
-  const originalPriceINR = isMega ? 799 : 499;
+  const originalPriceINR = isMega ? 499 : 299;
 
   const result = validateCoupon(code, originalPriceINR);
   if (!result || !result.valid) {
@@ -511,13 +511,13 @@ app.post('/api/validate-coupon', (req, res) => {
   });
 });
 
-// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹499 & 4,000+ Mega Bundle ₹799)
+// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹299 & 4,000+ Mega Bundle ₹499)
 app.post('/api/create-order', async (req, res) => {
   const { searchId, bundleType, couponCode } = req.body;
   const isMegaBundle = bundleType === 'mega_4000';
 
   let activeSessionId = searchId;
-  let baseAmountINR = isMegaBundle ? 799 : 499;
+  let baseAmountINR = isMegaBundle ? 499 : 299;
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 
