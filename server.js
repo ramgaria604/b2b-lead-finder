@@ -14,6 +14,15 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// 0. Lightweight Keepalive & Health Endpoint (Fast 1ms Response)
+app.get(['/api/ping', '/health'], (req, res) => {
+  res.status(200).json({ 
+    status: 'ok', 
+    uptime: Math.round(process.uptime()), 
+    timestamp: new Date().toISOString() 
+  });
+});
+
 // Initialize Razorpay instance if keys provided
 const razorpayKeyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
 const razorpayKeySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_placeholder';
@@ -724,4 +733,24 @@ app.get('/api/download-csv', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Global B2B Lead Finder Server is running on http://localhost:${PORT}`);
   console.log(`💳 Razorpay Mode: ${isRealRazorpay ? 'LIVE ACTIVE' : 'SANDBOX / TEST MODE'}`);
+
+  // Anti-Sleep Keepalive System for Render (Runs every 10 mins to keep container 24/7 warm)
+  const PING_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes (Render sleeps at 15 mins)
+  const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://b2b-lead-finder-1.onrender.com';
+
+  console.log(`⏰ Anti-Sleep Keepalive initialized for ${APP_URL} (Pinging every 10 mins)`);
+
+  setInterval(async () => {
+    try {
+      const pingUrl = `${APP_URL}/api/ping`;
+      const response = await fetch(pingUrl, {
+        headers: { 'User-Agent': 'LeadPulse-KeepAlive/1.0' }
+      });
+      if (response.ok) {
+        console.log(`⚡ [KEEPALIVE PING] Server successfully kept awake at ${new Date().toLocaleTimeString()}`);
+      }
+    } catch (err) {
+      console.warn('⚠️ Keepalive ping warning:', err.message);
+    }
+  }, PING_INTERVAL_MS);
 });
