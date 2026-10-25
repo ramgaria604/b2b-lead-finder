@@ -7,6 +7,16 @@
     "timesUsed": 0,
     "usedBy": [],
     "createdAt": "2026-10-24T16:00:00.000Z",
-    "description": "Nikhil Live Test Pass - Flat \u20b91 (Multi-Use for Testing)"
+    "description": "Nikhil Live Test Pass - Flat ₹1 (Multi-Use for Testing)"
+  },
+  "EDITOR50": {
+    "code": "EDITOR50",
+    "type": "percent",
+    "discountPercent": 50,
+    "maxUses": 10,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-26T02:24:00.000Z",
+    "description": "Secret 50% Off Deal for Editor / DM Clients"
   }
 }
