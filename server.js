@@ -698,7 +698,8 @@ app.get('/api/download-csv', (req, res) => {
     return `"${str}"`;
   };
 
-  const rows = searchData.leads.map(lead => [
+  const headerLine = headers.map(escapeCSV).join(',');
+  const dataLines = searchData.leads.map(lead => [
     escapeCSV(lead.id),
     escapeCSV(lead.name),
     escapeCSV(lead.category),
@@ -708,27 +709,24 @@ app.get('/api/download-csv', (req, res) => {
     escapeCSV(lead.address),
     escapeCSV(lead.city || searchData.city),
     escapeCSV(lead.country || searchData.country || 'Global'),
-    lead.rating,
-    lead.reviewsCount,
+    escapeCSV(lead.rating),
+    escapeCSV(lead.reviewsCount),
     escapeCSV('Verified Direct Contact')
-  ]);
+  ].join(','));
 
-  // Prepend UTF-8 Byte Order Mark (﻿) so Excel opens clean columns automatically
-  const BOM = '\uFEFF';
-  const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers, Sheets & AI tools (ChatGPT/Gemini) parse with 100% precision
+  const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
+  const csvBuffer = Buffer.concat([bom, Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8')]);
   const filename = searchData.isBundle
     ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records.csv`
     : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory.csv`;
-
-  // Explicit binary buffer with exact Content-Length to prevent mobile network cutoff & auto-delete
-  const csvBuffer = Buffer.from(csvContent, 'utf-8');
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
   res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
-  res.status(200).end(csvBuffer);
+  res.status(200).send(csvBuffer);
 });
 
 // 4.5. Free 10-Lead Sample CSV Route (Zero-Risk Proof of Real Data)
