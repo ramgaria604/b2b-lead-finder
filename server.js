@@ -773,7 +773,7 @@ app.get('/api/download-sample-csv', (req, res) => {
     // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers & Google Sheets open with 100% clean columns
     const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
     const csvBuffer = Buffer.concat([bom, Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8')]);
-    const filename = 'LeadPulse_FREE_Sample_10_Verified_Leads.csv';
+    const filename = 'LeadPulse_Sample_10_Verified_Leads.csv';
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

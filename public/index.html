@@ -331,7 +331,7 @@
             </table>
           </div>
 
-          <!-- 📥 1-Click Free Sample Download to Verify Data Legitimacy -->
+          <!-- 📥 1-Click Free Sample: Both Direct Native Download & In-Browser Viewer -->
           <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-3.5 border-t border-slate-800/80 bg-slate-900/60 -mx-4 -mb-4 p-4 rounded-b-2xl">
             <div class="text-left text-xs text-slate-300">
               <div class="flex items-center gap-1.5 font-bold text-white">
@@ -339,17 +339,26 @@
                 <span>Test Before Buying (Zero-Risk Proof)</span>
               </div>
               <p class="text-[11px] text-slate-400 mt-0.5">
-                Download 10 real sample rows right now. Open in Excel to verify direct phone lines, emails & websites.
+                Download sample CSV directly or inspect all 10 verified rows right on your screen.
               </p>
             </div>
-            <button 
-              type="button"
-              onclick="downloadSampleLeadCsv(this)"
-              class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 hover:border-emerald-400 shadow-lg shadow-emerald-950/40 transition shrink-0 cursor-pointer"
-            >
-              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-              <span id="sampleDownloadBtnText">Download 10 Free Sample Leads (.csv)</span>
-            </button>
+            <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+              <button 
+                type="button"
+                onclick="openSampleViewerModal()"
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 transition cursor-pointer"
+              >
+                <span>👀 View in Browser</span>
+              </button>
+              <a 
+                href="/api/download-sample-csv" 
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 hover:border-emerald-400 shadow-lg shadow-emerald-950/40 transition cursor-pointer whitespace-nowrap"
+                download="LeadPulse_Sample_10_Verified_Leads.csv"
+              >
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <span>📥 Direct Download CSV</span>
+              </a>
+            </div>
           </div>
         </div>
 
@@ -1177,6 +1186,45 @@
     </div>
   </main>
 
+  <!-- 🔍 Live Sample Leads In-Browser Viewer Modal -->
+  <div id="sampleViewerModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl relative">
+      <div class="p-5 border-b border-slate-800 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <span>👀 Free 10-Lead Sample Records</span>
+            <span class="text-[10px] font-bold uppercase tracking-wider bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">100% Verified</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5">Real sample contacts from the 4,000+ Master Directory (Opens on all devices without Excel).</p>
+        </div>
+        <button onclick="closeSampleViewerModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-5 overflow-y-auto text-xs text-slate-300 space-y-3" id="sampleViewerContent">
+        <!-- Injected via JS -->
+      </div>
+
+      <div class="p-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950/60 rounded-b-3xl">
+        <a 
+          href="/api/download-sample-csv" 
+          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition"
+          download="LeadPulse_Sample_10_Verified_Leads.csv"
+        >
+          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span>Download .CSV File</span>
+        </a>
+        <button 
+          onclick="closeSampleViewerModal(); openMegaBundleModal();" 
+          class="w-full sm:w-auto px-5 py-2 rounded-xl font-bold text-xs text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-400 shadow-md shadow-amber-500/20 cursor-pointer"
+        >
+          Unlock All 4,000+ Leads (₹249) &rarr;
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Checkout / Unlock Modal with Razorpay + UPI -->
   <div id="unlockModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative">
@@ -1916,6 +1964,39 @@
           toast.classList.add('hidden');
         }, 500);
       }, 6000);
+    }
+
+    function openSampleViewerModal() {
+      const modal = document.getElementById('sampleViewerModal');
+      const container = document.getElementById('sampleViewerContent');
+      if (!modal || !container) return;
+
+      if (megaBundleData && megaBundleData.preview) {
+        let cardsHtml = '';
+        megaBundleData.preview.forEach((lead, idx) => {
+          cardsHtml += `
+            <div class="bg-slate-950/80 border border-slate-800 p-3.5 rounded-xl space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <span class="font-bold text-white text-xs sm:text-sm">${idx+1}. ${lead.name}</span>
+                <span class="text-[10px] text-amber-400 font-bold bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">★ ${lead.rating}</span>
+              </div>
+              <div class="text-[11px] text-slate-400">${lead.category} &bull; <strong class="text-slate-300">${lead.city}, ${lead.country || ''}</strong></div>
+              <div class="flex items-center gap-4 text-[11px] pt-1 flex-wrap">
+                <span class="text-indigo-400 font-mono font-medium">📞 ${lead.phone}</span>
+                <span class="text-slate-300 font-mono">✉️ ${lead.email}</span>
+                <a href="${lead.website}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">🔗 ${lead.website ? lead.website.replace('https://', '') : ''}</a>
+              </div>
+            </div>
+          `;
+        });
+        container.innerHTML = cardsHtml;
+      }
+      modal.classList.remove('hidden');
+    }
+
+    function closeSampleViewerModal() {
+      const modal = document.getElementById('sampleViewerModal');
+      if (modal) modal.classList.add('hidden');
     }
 
     // Initialize Page
