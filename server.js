@@ -723,8 +723,7 @@ app.get('/api/download-csv', (req, res) => {
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
   res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.setHeader('Content-Length', csvBuffer.length);
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   res.status(200).end(csvBuffer);
@@ -755,7 +754,8 @@ app.get('/api/download-sample-csv', (req, res) => {
       return `"${str}"`;
     };
 
-    const rows = sampleLeads.map(lead => [
+    const headerLine = headers.map(escapeCSV).join(',');
+    const dataLines = sampleLeads.map(lead => [
       escapeCSV(lead.id),
       escapeCSV(lead.name),
       escapeCSV(lead.category),
@@ -765,21 +765,23 @@ app.get('/api/download-sample-csv', (req, res) => {
       escapeCSV(lead.address),
       escapeCSV(lead.city),
       escapeCSV(lead.country || 'Global'),
-      lead.rating,
-      lead.reviewsCount,
+      escapeCSV(lead.rating),
+      escapeCSV(lead.reviewsCount),
       escapeCSV('Verified Direct Contact (Free Sample)')
-    ]);
+    ].join(','));
 
-    const BOM = '\uFEFF';
-    const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers & Google Sheets open with 100% clean columns
+    const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
+    const csvBuffer = Buffer.concat([bom, Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8')]);
     const filename = 'LeadPulse_FREE_Sample_10_Verified_Leads.csv';
-    const csvBuffer = Buffer.from(csvContent, 'utf-8');
 
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.setHeader('Content-Length', csvBuffer.length);
-    res.setHeader('Cache-Control', 'no-cache');
-    res.status(200).end(csvBuffer);
+    // 'no-transform' prevents Cloudflare/reverse-proxy from re-compressing and causing browser size mismatch corruption
+    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.status(200).send(csvBuffer);
   } catch (err) {
     res.status(500).send('Error generating free sample CSV: ' + err.message);
   }

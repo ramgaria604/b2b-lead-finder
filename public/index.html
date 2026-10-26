@@ -342,14 +342,14 @@
                 Download 10 real sample rows right now. Open in Excel to verify direct phone lines, emails & websites.
               </p>
             </div>
-            <a 
-              href="/api/download-sample-csv" 
+            <button 
+              type="button"
+              onclick="downloadSampleLeadCsv(this)"
               class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 hover:border-emerald-400 shadow-lg shadow-emerald-950/40 transition shrink-0 cursor-pointer"
-              download="LeadPulse_FREE_Sample_10_Verified_Leads.csv"
             >
               <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-              <span>Download 10 Free Sample Leads (.csv)</span>
-            </a>
+              <span id="sampleDownloadBtnText">Download 10 Free Sample Leads (.csv)</span>
+            </button>
           </div>
         </div>
 
@@ -1712,7 +1712,7 @@
       }
     }
 
-    async function triggerClientDownload(downloadUrl) {
+    async function triggerClientDownload(downloadUrl, customFilename = 'LeadPulse_4000_Global_Mega_Directory.csv') {
       try {
         const res = await fetch(downloadUrl);
         if (!res.ok) {
@@ -1723,16 +1723,32 @@
         const a = document.createElement('a');
         a.style.display = 'none';
         a.href = blobUrl;
-        a.download = 'LeadPulse_4000_Global_Mega_Directory.csv';
+        a.download = customFilename;
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {
           document.body.removeChild(a);
           window.URL.revokeObjectURL(blobUrl);
-        }, 3000);
+        }, 4000);
       } catch (err) {
         console.warn('Blob fetch failed, falling back to location.href:', err);
         window.location.href = downloadUrl;
+      }
+    }
+
+    async function downloadSampleLeadCsv(btn) {
+      const btnText = document.getElementById('sampleDownloadBtnText');
+      const originalText = btnText ? btnText.innerText : 'Download 10 Free Sample Leads (.csv)';
+      try {
+        if (btnText) btnText.innerText = 'Downloading...';
+        await triggerClientDownload('/api/download-sample-csv', 'LeadPulse_FREE_Sample_10_Verified_Leads.csv');
+        if (btnText) btnText.innerText = '✓ Downloaded Successfully!';
+        setTimeout(() => {
+          if (btnText) btnText.innerText = originalText;
+        }, 3000);
+      } catch (err) {
+        if (btnText) btnText.innerText = originalText;
+        window.location.href = '/api/download-sample-csv';
       }
     }
 
