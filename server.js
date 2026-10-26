@@ -730,6 +730,61 @@ app.get('/api/download-csv', (req, res) => {
   res.status(200).end(csvBuffer);
 });
 
+// 4.5. Free 10-Lead Sample CSV Route (Zero-Risk Proof of Real Data)
+app.get('/api/download-sample-csv', (req, res) => {
+  try {
+    const sampleLeads = getMegaBundlePreview(10);
+    const headers = [
+      'Record ID',
+      'Company / Agent Name',
+      'Category / Specialization',
+      'Direct Phone Number',
+      'Verified Email Address',
+      'Official Website',
+      'Street Address',
+      'City',
+      'Country / Region',
+      'Google Rating',
+      'Total Reviews',
+      'Verification Status'
+    ];
+
+    const escapeCSV = (val) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const rows = sampleLeads.map(lead => [
+      escapeCSV(lead.id),
+      escapeCSV(lead.name),
+      escapeCSV(lead.category),
+      escapeCSV(lead.phone),
+      escapeCSV(lead.email),
+      escapeCSV(lead.website),
+      escapeCSV(lead.address),
+      escapeCSV(lead.city),
+      escapeCSV(lead.country || 'Global'),
+      lead.rating,
+      lead.reviewsCount,
+      escapeCSV('Verified Direct Contact (Free Sample)')
+    ]);
+
+    const BOM = '\uFEFF';
+    const csvContent = BOM + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const filename = 'LeadPulse_FREE_Sample_10_Verified_Leads.csv';
+    const csvBuffer = Buffer.from(csvContent, 'utf-8');
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', csvBuffer.length);
+    res.setHeader('Cache-Control', 'no-cache');
+    res.status(200).end(csvBuffer);
+  } catch (err) {
+    res.status(500).send('Error generating free sample CSV: ' + err.message);
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`🚀 Global B2B Lead Finder Server is running on http://localhost:${PORT}`);
   console.log(`💳 Razorpay Mode: ${isRealRazorpay ? 'LIVE ACTIVE' : 'SANDBOX / TEST MODE'}`);
