@@ -1,3 +1,5 @@
+const PDFDocument = require('pdfkit');
+const XLSX = require('xlsx');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -730,6 +732,66 @@ app.get('/api/download-csv', (req, res) => {
 });
 
 // 4.5. Free 10-Lead Sample CSV Route (Zero-Risk Proof of Real Data)
+
+// 4.6. Free Sample PDF Route (Opens seamlessly on 100% of mobile phones & PCs)
+app.get('/api/download-sample-pdf', (req, res) => {
+  try {
+    const sampleLeads = getMegaBundlePreview(10);
+    const doc = new PDFDocument({ margin: 36, size: 'A4' });
+    const chunks = [];
+
+    doc.on('data', chunk => chunks.push(chunk));
+    doc.on('end', () => {
+      const pdfBuffer = Buffer.concat(chunks);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename="LeadPulse_Sample_10_Verified_Leads.pdf"');
+      res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
+      res.status(200).send(pdfBuffer);
+    });
+
+    // Clean Executive Header
+    doc.fontSize(18).fillColor('#0F172A').text('LeadPulse AI - 10 Verified Sample Leads', { align: 'center' });
+    doc.fontSize(10).fillColor('#64748B').text('Executive B2B Directory (UAE, USA, Canada, UK, Australia & India)', { align: 'center' });
+    doc.moveDown(1.5);
+
+    sampleLeads.forEach((lead, i) => {
+      doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`, { underline: false });
+      doc.fontSize(9).fillColor('#D97706').text(`   Specialization: ${lead.category}  |  Google Rating: ★ ${lead.rating} (${lead.reviewsCount} reviews)`);
+      doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
+      doc.fontSize(9).fillColor('#1E293B').text(`   Verified Email: ${lead.email}`);
+      doc.fontSize(9).fillColor('#059669').text(`   Official Website: ${lead.website}`);
+      doc.fontSize(8).fillColor('#64748B').text(`   Street Location: ${lead.address}, ${lead.city}, ${lead.country || 'Global'}`);
+      doc.moveDown(0.8);
+    });
+
+    doc.end();
+  } catch (err) {
+    res.status(500).send('Error generating PDF sample: ' + err.message);
+  }
+});
+
+// 4.7. Free Sample Native Excel (.xlsx) Route
+app.get('/api/download-sample-xlsx', (req, res) => {
+  try {
+    const sampleLeads = getMegaBundlePreview(10);
+    const wb = XLSX.utils.book_new();
+    const wsData = [
+      ['Record ID', 'Company / Agent Name', 'Category', 'Direct Phone', 'Verified Email', 'Website', 'Address', 'City', 'Country', 'Rating', 'Reviews'],
+      ...sampleLeads.map(l => [l.id, l.name, l.category, l.phone, l.email, l.website, l.address, l.city, l.country || 'Global', l.rating, l.reviewsCount])
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+    XLSX.utils.book_append_sheet(wb, ws, 'Sample Leads');
+    const xlsxBuf = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="LeadPulse_Sample_10_Verified_Leads.xlsx"');
+    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
+    res.status(200).send(xlsxBuf);
+  } catch (err) {
+    res.status(500).send('Error generating XLSX sample: ' + err.message);
+  }
+});
+
 app.get('/api/download-sample-csv', (req, res) => {
   try {
     const sampleLeads = getMegaBundlePreview(10);

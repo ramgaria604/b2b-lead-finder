@@ -342,21 +342,27 @@
                 Download sample CSV directly or inspect all 10 verified rows right on your screen.
               </p>
             </div>
-            <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap">
+            <div class="flex items-center gap-2 w-full sm:w-auto flex-wrap justify-end">
               <button 
                 type="button"
                 onclick="openSampleViewerModal()"
-                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 transition cursor-pointer"
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 hover:border-slate-600 transition cursor-pointer"
               >
-                <span>👀 View in Browser</span>
+                <span>👀 View Online</span>
               </button>
               <a 
-                href="/api/download-sample-csv" 
-                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 hover:text-emerald-200 border border-emerald-500/40 hover:border-emerald-400 shadow-lg shadow-emerald-950/40 transition cursor-pointer whitespace-nowrap"
-                download="LeadPulse_Sample_10_Verified_Leads.csv"
+                href="/api/download-sample-pdf" 
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 hover:text-white border border-rose-500/40 hover:border-rose-400 transition cursor-pointer whitespace-nowrap shadow-sm"
+                download="LeadPulse_Sample_10_Verified_Leads.pdf"
               >
-                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                <span>📥 Direct Download CSV</span>
+                <span>📄 Download PDF (Opens on all Phones)</span>
+              </a>
+              <a 
+                href="/api/download-sample-xlsx" 
+                class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 hover:text-white border border-emerald-500/40 hover:border-emerald-400 transition cursor-pointer whitespace-nowrap shadow-sm"
+                download="LeadPulse_Sample_10_Verified_Leads.xlsx"
+              >
+                <span>📊 Excel (.xlsx)</span>
               </a>
             </div>
           </div>
@@ -1207,14 +1213,22 @@
       </div>
 
       <div class="p-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950/60 rounded-b-3xl">
-        <a 
-          href="/api/download-sample-csv" 
-          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 transition"
-          download="LeadPulse_Sample_10_Verified_Leads.csv"
-        >
-          <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          <span>Download .CSV File</span>
-        </a>
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <a 
+            href="/api/download-sample-pdf" 
+            class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 transition"
+            download="LeadPulse_Sample_10_Verified_Leads.pdf"
+          >
+            <span>📄 Download PDF</span>
+          </a>
+          <a 
+            href="/api/download-sample-xlsx" 
+            class="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition"
+            download="LeadPulse_Sample_10_Verified_Leads.xlsx"
+          >
+            <span>📊 Excel (.xlsx)</span>
+          </a>
+        </div>
         <button 
           onclick="closeSampleViewerModal(); openMegaBundleModal();" 
           class="w-full sm:w-auto px-5 py-2 rounded-xl font-bold text-xs text-slate-950 bg-gradient-to-r from-amber-400 to-amber-300 hover:from-amber-300 hover:to-amber-400 shadow-md shadow-amber-500/20 cursor-pointer"
