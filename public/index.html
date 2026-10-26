@@ -74,16 +74,16 @@
   <!-- Top Announcement Bar (Sleek Minimalist Premium) -->
   <div class="bg-[#0b101d]/90 border-b border-slate-800/80 py-2.5 px-4 text-center text-xs text-slate-300 backdrop-blur">
     <div class="inline-flex items-center gap-2 sm:gap-3 flex-wrap justify-center">
-      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-300 border border-amber-500/25">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-        🌟 Golden Freelancer Opportunity
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold uppercase tracking-wider bg-rose-500/20 text-rose-300 border border-rose-500/30">
+        <span class="w-1.5 h-1.5 rounded-full bg-rose-400 animate-ping"></span>
+        🚨 Only 4 Copies Left
       </span>
       <span class="font-medium text-slate-200">
-        Pitch 4,000+ High-Paying US & Dubai Clients at <span class="text-white font-bold">₹249</span>
+        Limited to <strong class="text-white font-extrabold">15 Copies/Week</strong> to Prevent Lead Saturation
         <span class="text-slate-500 hidden sm:inline mx-1.5">&bull;</span>
-        <span class="text-amber-300/90 hidden sm:inline">Flash Deal: Save ₹550 (Was ₹799)</span>
+        <span class="text-amber-300 font-bold hidden sm:inline">₹249 Flash Deal (Was ₹799)</span>
         <span class="text-slate-500 hidden md:inline mx-1.5">&bull;</span>
-        <span class="text-emerald-400 hidden md:inline">Direct WhatsApp & Email Lines</span>
+        <span class="text-emerald-400 font-semibold hidden md:inline">11 Claimed &bull; 4 Left</span>
       </span>
       <button type="button" onclick="openMegaBundleModal()" class="inline-flex items-center gap-1 text-xs font-semibold text-amber-300 hover:text-white transition group cursor-pointer ml-1">
         <span>Claim Access</span>
@@ -202,10 +202,11 @@
             <span class="text-slate-600">&bull;</span>
             <span class="text-emerald-400 font-medium">Replaced Bi-Weekly</span>
           </div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30">
-            <span>⚡ ₹249 Creator Flash Tier</span>
-            <span class="text-slate-500">&bull;</span>
-            <span class="text-slate-300 font-normal">Special 24H Drop (Regular ₹799)</span>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30">
+            <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+            <span>⚡ Only 4 of 15 Copies Left This Week</span>
+            <span class="text-slate-500 hidden sm:inline">&bull;</span>
+            <span class="text-amber-300 font-bold hidden sm:inline">₹249 Flash Tier (Was ₹799)</span>
           </div>
         </div>
 
@@ -233,6 +234,23 @@
               </div>
               <div class="text-[10px] text-emerald-400 font-bold mt-1">
                 ⚡ SAVE ₹550 (LIMITED FLASH DROP)
+              </div>
+              
+              <!-- 15 Copies/Week Scarcity Meter -->
+              <div class="mt-2.5 pt-2 border-t border-slate-800 text-left">
+                <div class="flex items-center justify-between text-[10px] font-bold mb-1">
+                  <span class="text-rose-400 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
+                    Only 4 Copies Left
+                  </span>
+                  <span class="text-slate-400 font-mono text-[9px]">11/15 Claimed</span>
+                </div>
+                <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-gradient-to-r from-amber-400 to-rose-500 h-1.5 rounded-full" style="width: 73%"></div>
+                </div>
+                <div class="text-[9px] text-slate-400 mt-1 leading-tight text-center">
+                  Capped at 15/week to protect high reply rates
+                </div>
               </div>
             </div>
           </div>
@@ -1134,6 +1152,17 @@
           <div class="text-slate-400 text-[11px] mt-0.5">Get 4,000+ Mixed Real Estate, Legal & Solar leads for ₹249</div>
         </div>
         <span class="text-xs font-bold text-amber-300 bg-amber-500/20 px-2.5 py-1 rounded-lg border border-amber-500/30 whitespace-nowrap">Switch &rarr;</span>
+      </div>
+
+      <!-- Scarcity Batch Banner in Modal -->
+      <div class="p-2.5 rounded-xl bg-gradient-to-r from-rose-500/15 via-amber-500/10 to-rose-500/15 border border-rose-500/30 text-xs flex items-center justify-between text-rose-300 mb-3.5 shadow-sm">
+        <div class="flex items-center gap-1.5 font-bold text-[11px]">
+          <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+          <span>Weekly Allocation: 11 / 15 Claimed</span>
+        </div>
+        <span class="text-[10px] font-extrabold text-amber-300 bg-rose-500/20 px-2 py-0.5 rounded-md border border-rose-500/30">
+          Only 4 Left
+        </span>
       </div>
 
       <!-- Order Summary Card -->
