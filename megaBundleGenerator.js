@@ -356,8 +356,8 @@ function getMegaBundleStats() {
   const all = generateMegaBundleLeads();
   return {
     totalLeads: all.length,
-    price: 499,
-    priceFormatted: '₹499',
+    price: 199,
+    priceFormatted: '₹199',
     breakdown: [
       { category: 'Real Estate Agents & Luxury Brokers', count: '1,250+', icon: '🏢', locations: 'Dubai, Miami, NY, Toronto, Sydney, London' },
       { category: 'Immigration Lawyers & Relocation Consultants', count: '850+', icon: '🛂', locations: 'Canada, Australia, UAE, UK, USA' },

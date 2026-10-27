@@ -23,28 +23,28 @@
     "code": "RONAK100",
     "type": "flat",
     "discountAmount": 100,
-    "minOrderAmount": 499,
+    "minOrderAmount": 199,
     "allowedBundleTypes": [
       "mega_4000"
     ],
     "maxUses": null,
     "timesUsed": 0,
     "usedBy": [],
-    "createdAt": "2026-10-27T10:21:08.013Z",
-    "description": "Special Ronak Deal — Flat ₹100 OFF on Complete Closing Kit (₹499 -> ₹399)"
+    "createdAt": "2026-10-27T13:31:17.196Z",
+    "description": "Special Ronak Deal — Flat ₹100 OFF (₹199 -> ₹99)"
   },
   "RONAK 100": {
     "code": "RONAK100",
     "type": "flat",
     "discountAmount": 100,
-    "minOrderAmount": 499,
+    "minOrderAmount": 199,
     "allowedBundleTypes": [
       "mega_4000"
     ],
     "maxUses": null,
     "timesUsed": 0,
     "usedBy": [],
-    "createdAt": "2026-10-27T10:21:08.014Z",
-    "description": "Special Ronak Deal — Flat ₹100 OFF on Complete Closing Kit (₹499 -> ₹399)"
+    "createdAt": "2026-10-27T13:31:17.400Z",
+    "description": "Special Ronak Deal — Flat ₹100 OFF (₹199 -> ₹99)"
   }
 }

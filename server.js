@@ -570,21 +570,9 @@ app.get('/api/bundle-info', (req, res) => {
 
 // 1.8. Validate Coupon Endpoint (Client Verification)
 app.post('/api/validate-coupon', (req, res) => {
-  const { code, bundleType } = req.body;
-  const isMega = bundleType === 'mega_4000';
-  const isGrowth500 = bundleType === 'growth_500';
-  const isStarter = bundleType === 'starter_50' || bundleType === 'starter_100';
-
-  if (isStarter) {
-    return res.status(400).json({ success: false, error: 'Coupons cannot be applied to the ₹20 Micro Starter Pack.' });
-  }
-
-  if (!isMega) {
-    return res.status(400).json({ success: false, error: 'The RONAK100 coupon is exclusively valid for the Complete Client Closing System (₹499 Pack).' });
-  }
-
-  const originalPriceINR = 499;
-  const result = validateCoupon(code, originalPriceINR, bundleType);
+  const { code } = req.body;
+  const originalPriceINR = 199;
+  const result = validateCoupon(code, originalPriceINR, 'mega_4000');
   if (!result || !result.valid) {
     return res.status(400).json({ success: false, error: result ? result.error : 'Invalid coupon code.' });
   }
@@ -601,24 +589,13 @@ app.post('/api/validate-coupon', (req, res) => {
 
 // 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹149 & 4,000+ Mega Bundle ₹249)
 app.post('/api/create-order', async (req, res) => {
-  const { searchId, bundleType, couponCode } = req.body;
-  const isMegaBundle = bundleType === 'mega_4000';
-  const isGrowth500 = bundleType === 'growth_500';
-  const isStarterPack = bundleType === 'starter_50' || bundleType === 'starter_100';
-
-  let activeSessionId = searchId;
-  let baseAmountINR = isMegaBundle ? 499 : (isGrowth500 ? 100 : (isStarterPack ? 20 : 149));
+  const { couponCode } = req.body;
+  const baseAmountINR = 199;
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 
   if (couponCode) {
-    if (isStarterPack) {
-      return res.status(400).json({ error: 'Coupons cannot be applied to the ₹20 Micro Starter Pack.' });
-    }
-    if (!isMegaBundle) {
-      return res.status(400).json({ error: 'Coupon codes are exclusively valid for the Complete Client Closing System (₹499).' });
-    }
-    const val = validateCoupon(couponCode, baseAmountINR, bundleType);
+    const val = validateCoupon(couponCode, baseAmountINR, 'mega_4000');
     if (!val || !val.valid) {
       return res.status(400).json({ error: val ? val.error : 'Invalid or expired coupon code.' });
     }
@@ -626,66 +603,22 @@ app.post('/api/create-order', async (req, res) => {
     appliedCouponCode = val.code;
   }
 
-  let amountInPaise = Math.round(finalAmountINR * 100);
-  let orderDescription = isMegaBundle
-    ? `LeadPulse Complete Client Closing Kit (₹${finalAmountINR})`
-    : (isGrowth500
-        ? `LeadPulse 500 VIP Leads (₹${finalAmountINR})`
-        : (isStarterPack 
-            ? `LeadPulse 100 Starter Leads (₹${finalAmountINR})` 
-            : `LeadPulse B2B Leads Export (₹${finalAmountINR})`));
+  const activeSessionId = `mega_4000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+  const megaLeads = generateMegaBundleLeads();
+  searchCache.set(activeSessionId, {
+    isBundle: true,
+    bundleType: 'mega_4000',
+    query: 'Complete Client Closing Kit & 4,000+ Lead Vault',
+    city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+    country: 'Global',
+    totalCount: megaLeads.length,
+    leads: megaLeads,
+    appliedCoupon: appliedCouponCode,
+    createdAt: Date.now()
+  });
 
-  if (isGrowth500) {
-    activeSessionId = `growth_500_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-    const growthLeads = getNextStarterLeads(500);
-    searchCache.set(activeSessionId, {
-      isBundle: true,
-      bundleType: 'growth_500',
-      query: '500 Verified High-Ticket Decision Makers',
-      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
-      country: 'Global',
-      totalCount: growthLeads.length,
-      leads: growthLeads,
-      appliedCoupon: appliedCouponCode,
-      createdAt: Date.now()
-    });
-  } else if (isStarterPack) {
-    activeSessionId = `starter_50_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-    const starterLeads = getNextStarterLeads(100);
-    searchCache.set(activeSessionId, {
-      isBundle: true,
-      bundleType: 'starter_50',
-      query: '100 Verified B2B Starter Leads',
-      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
-      country: 'Global',
-      totalCount: starterLeads.length,
-      leads: starterLeads,
-      appliedCoupon: appliedCouponCode,
-      createdAt: Date.now()
-    });
-  } else if (isMegaBundle) {
-    activeSessionId = `mega_4000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-
-    // Cache the mega bundle dataset under activeSessionId
-    const megaLeads = generateMegaBundleLeads();
-    searchCache.set(activeSessionId, {
-      isBundle: true,
-      bundleType: 'mega_4000',
-      query: 'Complete Client Closing Kit & 4,000+ Lead Vault',
-      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
-      country: 'Global',
-      totalCount: megaLeads.length,
-      leads: megaLeads,
-      appliedCoupon: appliedCouponCode,
-      createdAt: Date.now()
-    });
-  } else {
-    if (!searchId || !searchCache.has(searchId)) {
-      return res.status(400).json({ error: 'Invalid or expired search session.' });
-    }
-    const sData = searchCache.get(searchId);
-    sData.appliedCoupon = appliedCouponCode;
-  }
+  const amountInPaise = Math.round(finalAmountINR * 100);
+  const orderDescription = `LeadPulse Complete Client Closing Kit (₹${finalAmountINR})`;
 
   if (isRealRazorpay && razorpay) {
     try {
