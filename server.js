@@ -488,9 +488,10 @@ function saveCoupons(coupons) {
 
 function validateCoupon(rawCode, originalAmountINR) {
   if (!rawCode) return null;
-  const code = String(rawCode).trim().toUpperCase();
+  const inputCode = String(rawCode).trim().toUpperCase();
+  const normalizedCode = inputCode.replace(/\s+/g, '');
   const coupons = getCoupons();
-  const coupon = coupons[code];
+  const coupon = coupons[inputCode] || coupons[normalizedCode];
 
   if (!coupon) {
     return { valid: false, error: 'Invalid coupon code.' };
@@ -561,7 +562,7 @@ app.post('/api/validate-coupon', (req, res) => {
   const isMega = bundleType === 'mega_4000';
   const isGrowth500 = bundleType === 'growth_500';
   const isStarter = bundleType === 'starter_50' || bundleType === 'starter_100';
-  const originalPriceINR = isMega ? 299 : (isGrowth500 ? 100 : (isStarter ? 20 : 149));
+  const originalPriceINR = isMega ? 499 : (isGrowth500 ? 100 : (isStarter ? 20 : 149));
 
   const result = validateCoupon(code, originalPriceINR);
   if (!result || !result.valid) {
@@ -586,7 +587,7 @@ app.post('/api/create-order', async (req, res) => {
   const isStarterPack = bundleType === 'starter_50' || bundleType === 'starter_100';
 
   let activeSessionId = searchId;
-  let baseAmountINR = isMegaBundle ? 299 : (isGrowth500 ? 100 : (isStarterPack ? 20 : 149));
+  let baseAmountINR = isMegaBundle ? 499 : (isGrowth500 ? 100 : (isStarterPack ? 20 : 149));
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 

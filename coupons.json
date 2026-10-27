@@ -18,5 +18,25 @@
     "usedBy": [],
     "createdAt": "2026-10-26T02:24:00.000Z",
     "description": "Secret Flat ₹50 Off Deal (₹249 -> ₹199)"
+  },
+  "RONAK100": {
+    "code": "RONAK100",
+    "type": "flat",
+    "discountAmount": 100,
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-27T09:57:05.331Z",
+    "description": "Special Ronak Deal — Flat ₹100 OFF (₹499 -> ₹399)"
+  },
+  "RONAK 100": {
+    "code": "RONAK100",
+    "type": "flat",
+    "discountAmount": 100,
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-27T09:57:05.332Z",
+    "description": "Special Ronak Deal — Flat ₹100 OFF (₹499 -> ₹399)"
   }
 }
