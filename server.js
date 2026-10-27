@@ -1,5 +1,5 @@
 const PDFDocument = require('pdfkit');
-const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -705,14 +705,15 @@ app.post('/api/verify-payment', (req, res) => {
     success: true,
     message: 'Payment verified successfully! Access granted.',
     paymentId: razorpay_payment_id,
-    downloadUrl: `/api/download-csv?token=${token}&searchId=${searchId}`,
+    downloadUrl: `/api/download-csv?token=${token}&searchId=${searchId}&format=xlsx`,
     downloadUrlXlsx: `/api/download-csv?token=${token}&searchId=${searchId}&format=xlsx`,
+    downloadUrlCsv: `/api/download-csv?token=${token}&searchId=${searchId}&format=csv`,
     downloadUrlPdf: `/api/download-csv?token=${token}&searchId=${searchId}&format=pdf`
   });
 });
 
 // 4. Download Full Leads (Supports CSV, real XLSX Excel, and PDF formats)
-app.get('/api/download-csv', (req, res) => {
+app.get('/api/download-csv', async (req, res) => {
   const { token, searchId, format } = req.query;
   let searchData = searchCache.get(searchId);
 
@@ -778,164 +779,231 @@ app.get('/api/download-csv', (req, res) => {
         ? `LeadPulse_Complete_Client_Closing_Kit_1000_Directory`
         : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory`);
 
-  // --- Real Native Excel (.xlsx) Format (Optional for PC Users) ---
-  if (format === 'xlsx') {
-    const wb = XLSX.utils.book_new();
-    const wsData = [
-      ['Lead ID', 'Company / Agent Name', 'Category / Specialization', 'Direct Phone Number', 'Verified Email Address', 'Official Website', 'Street Address', 'City', 'Country / Region', 'Google Rating', 'Total Reviews', 'Verification Status'],
-      ...searchData.leads.map(l => [l.id, l.name, l.category, l.phone, l.email, l.website, l.address, l.city || searchData.city, l.country || searchData.country || 'Global', l.rating, l.reviewsCount, 'Verified Direct Contact'])
+  // --- 1. Real Native Excel (.xlsx) Format (Engineered with ExcelJS for 100% Android, iOS & PC compatibility) ---
+  if (format === 'xlsx' || !format) {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'LeadPulse AI';
+      workbook.lastModifiedBy = 'LeadPulse AI';
+      workbook.created = new Date();
+      workbook.modified = new Date();
+
+      const worksheet = workbook.addWorksheet('Verified Leads', {
+        views: [{ state: 'frozen', ySplit: 1 }]
+      });
+
+      worksheet.columns = [
+        { header: 'Lead ID', key: 'id', width: 16 },
+        { header: 'Company / Agent Name', key: 'name', width: 36 },
+        { header: 'Category / Specialization', key: 'category', width: 32 },
+        { header: 'Direct Phone Number', key: 'phone', width: 22 },
+        { header: 'Verified Email Address', key: 'email', width: 32 },
+        { header: 'Official Website', key: 'website', width: 32 },
+        { header: 'Street Address', key: 'address', width: 38 },
+        { header: 'City', key: 'city', width: 18 },
+        { header: 'Country / Region', key: 'country', width: 22 },
+        { header: 'Google Rating', key: 'rating', width: 14 },
+        { header: 'Total Reviews', key: 'reviewsCount', width: 14 },
+        { header: 'Verification Status', key: 'status', width: 24 }
+      ];
+
+      // Style header row
+      const headerRow = worksheet.getRow(1);
+      headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 11, name: 'Calibri' };
+      headerRow.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FF0F172A' }
+      };
+      headerRow.alignment = { vertical: 'middle', horizontal: 'left' };
+      headerRow.height = 28;
+
+      // Add leads
+      searchData.leads.forEach((l, idx) => {
+        const row = worksheet.addRow({
+          id: l.id,
+          name: l.name,
+          category: l.category,
+          phone: l.phone,
+          email: l.email,
+          website: l.website,
+          address: l.address,
+          city: l.city || searchData.city,
+          country: l.country || searchData.country || 'Global',
+          rating: l.rating,
+          reviewsCount: l.reviewsCount,
+          status: 'Verified Direct Contact'
+        });
+
+        row.font = { size: 10, name: 'Calibri' };
+        row.alignment = { vertical: 'middle' };
+        row.height = 20;
+
+        if (idx % 2 === 1) {
+          row.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFF8FAFC' }
+          };
+        }
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.xlsx"`);
+      res.setHeader('Content-Length', buffer.length);
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.status(200).send(buffer);
+    } catch (err) {
+      console.error('Excel Generation Error:', err);
+      return res.status(500).send('Error generating Excel file');
+    }
+  }
+
+  // --- 2. Clean RFC-4180 CSV with UTF-8 BOM Format ---
+  if (format === 'csv') {
+    const headers = [
+      'Lead ID',
+      'Company / Agent Name',
+      'Category / Specialization',
+      'Direct Phone Number',
+      'Verified Email Address',
+      'Official Website',
+      'Street Address',
+      'City',
+      'Country / Region',
+      'Google Rating',
+      'Total Reviews',
+      'Verification Status'
     ];
-    const ws = XLSX.utils.aoa_to_sheet(wsData);
-    XLSX.utils.book_append_sheet(wb, ws, 'Verified Leads');
-    const xlsxBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.xlsx"`);
-    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
-    return res.status(200).send(xlsxBuffer);
+    const escapeCSV = (val) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const headerLine = headers.map(escapeCSV).join(',');
+    const dataLines = searchData.leads.map(lead => [
+      escapeCSV(lead.id),
+      escapeCSV(lead.name),
+      escapeCSV(lead.category),
+      escapeCSV(lead.phone),
+      escapeCSV(lead.email),
+      escapeCSV(lead.website),
+      escapeCSV(lead.address),
+      escapeCSV(lead.city || searchData.city),
+      escapeCSV(lead.country || searchData.country || 'Global'),
+      escapeCSV(lead.rating),
+      escapeCSV(lead.reviewsCount),
+      escapeCSV('Verified Direct Contact')
+    ].join(','));
+
+    // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers, Sheets & AI tools parse with 100% precision
+    const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
+    const csvContent = Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8');
+    const csvBuffer = Buffer.concat([bom, csvContent]);
+
+    res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+    res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.csv"`);
+    res.setHeader('Content-Length', csvBuffer.length);
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return res.status(200).send(csvBuffer);
   }
 
-  // --- Official Executive PDF Report Format (DEFAULT: 100% Guaranteed Open on Every Phone & PC) ---
-  const doc = new PDFDocument({ margin: 36, size: 'A4' });
-  const chunks = [];
-  doc.on('data', c => chunks.push(c));
-  doc.on('end', () => {
-    const pdfBuffer = Buffer.concat(chunks);
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `inline; filename="${baseFilename}.pdf"`);
-    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
-    res.status(200).send(pdfBuffer);
-  });
+  // --- 3. Official Executive PDF Report Format ---
+  if (format === 'pdf') {
+    const doc = new PDFDocument({ margin: 36, size: 'A4' });
+    const chunks = [];
+    doc.on('data', c => chunks.push(c));
+    doc.on('end', () => {
+      const pdfBuffer = Buffer.concat(chunks);
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.pdf"`);
+      res.setHeader('Content-Length', pdfBuffer.length);
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.status(200).send(pdfBuffer);
+    });
 
-  const isMegaSystem = searchData.bundleType === 'mega_1000';
+    const isMegaSystem = searchData.bundleType === 'mega_1000';
 
-  if (isMegaSystem) {
-    // --- COVER / MASTER SYSTEM HEADER ---
-    doc.fontSize(22).fillColor('#0F172A').text('LeadPulse AI — Complete Client Closing System', { align: 'center' });
-    doc.fontSize(11).fillColor('#D97706').text('The Complete Freelancer Acquisition Playbook & 1,000+ Master Directory', { align: 'center' });
+    if (isMegaSystem) {
+      // --- COVER / MASTER SYSTEM HEADER ---
+      doc.fontSize(22).fillColor('#0F172A').text('LeadPulse AI — Complete Client Closing System', { align: 'center' });
+      doc.fontSize(11).fillColor('#D97706').text('The Complete Freelancer Acquisition Playbook & 1,000+ Master Directory', { align: 'center' });
+      doc.moveDown(1.5);
+
+      // --- MODULE 1: THE STEP-BY-STEP "HOW TO CLOSE" PLAYBOOK ---
+      doc.fontSize(13).fillColor('#0F172A').text('MODULE 1: THE STEP-BY-STEP CLIENT CLOSING PLAYBOOK', { underline: true });
+      doc.moveDown(0.4);
+      doc.fontSize(9.5).fillColor('#334155').text(
+        '1. Target Selection: Filter leads by your specific niche (e.g. Dubai Luxury Real Estate for video editors, US Solar Contractors for web design/funnels). Pick 15-20 decision makers per day.\n' +
+        '2. The "Trojan Horse" Audit Strategy: NEVER send generic "Hi, hire me" messages. Instead, create a 30-second personalized audit, sample reel, or visual redesign based on their public social media or website.\n' +
+        '3. Friction-Free WhatsApp Outreach: Reach out directly on WhatsApp or verified email during their local business hours (10 AM - 4 PM local time).\n' +
+        '4. Soft Close & Retainer Offer: Offer to do the first 1-2 deliverables as a risk-free pilot or offer 50% deposit terms. Aim for a $500 - $1,500/month recurring retainer.'
+      );
+      doc.moveDown(1.2);
+
+      // --- MODULE 2: PLUG-AND-PLAY COLD OUTREACH SCRIPTS ---
+      doc.fontSize(13).fillColor('#0F172A').text('MODULE 2: COPY-PASTE OUTREACH SCRIPTS (35%+ REPLY RATE)', { underline: true });
+      doc.moveDown(0.4);
+      doc.fontSize(10).fillColor('#1E293B').text('SCRIPT A: WhatsApp Pitch for Video Editors / Reel Creators');
+      doc.fontSize(9).fillColor('#4338CA').text(
+        '"Hey [Name], saw your listing/post for [Property/Clinic/Business]. Loved the aesthetics!\n' +
+        'I noticed your Instagram reels could get 3x more buyer inquiries with dynamic pacing and luxury animated captions. I actually edited a quick 20-second sample reel for your brand to show you what I mean: [Loom / Drive Link].\n' +
+        'No strings attached — feel free to post it! If you like the style, I can edit 12 reels like this for you every month for $500. Let me know if you want to test it!"'
+      );
+      doc.moveDown(0.8);
+
+      doc.fontSize(10).fillColor('#1E293B').text('SCRIPT B: Cold Email Pitch for Web & Marketing Agencies');
+      doc.fontSize(9).fillColor('#4338CA').text(
+        '"Subject: Quick suggestion for [Company Name] website/leads\n' +
+        'Hi [Name],\n' +
+        'I was looking through local businesses in [City] and noticed your website takes ~5s to load on mobile and is missing a direct WhatsApp booking widget.\n' +
+        'I put together a 60-second video walkthrough showing 3 tweaks that could boost your booking conversion by 25%: [Link].\n' +
+        'Would you be open to a quick 5-minute chat this Thursday to see if it makes sense to implement this for you? Best, [Your Name]"'
+      );
+      doc.moveDown(0.8);
+
+      doc.fontSize(10).fillColor('#1E293B').text('SCRIPT C: The 48-Hour Polite Follow-Up');
+      doc.fontSize(9).fillColor('#4338CA').text(
+        '"Hey [Name], just bumping this in case it got buried under your messages! Did you get a chance to see the sample video I made for you? Either way, keep up the great work with [Company Name]!"'
+      );
+      doc.moveDown(1.2);
+
+      // --- MODULE 3: CLIENT PROPOSAL & AGREEMENT TEMPLATE ---
+      doc.fontSize(13).fillColor('#0F172A').text('MODULE 3: HIGH-TICKET CLIENT PROPOSAL & AGREEMENT TEMPLATE', { underline: true });
+      doc.moveDown(0.4);
+      doc.fontSize(9).fillColor('#334155').text(
+        '• Scope of Work: 12-16 High-Retention Reels / Month (Scripting, Editing, Subtitles, Revisions).\n' +
+        '• Deliverable Turnaround: 48 hours per video upon raw footage receipt.\n' +
+        '• Investment: $650 USD / Month (Paid via Stripe, Wise, or Direct Bank Wire).\n' +
+        '• Payment Terms: 50% upon agreement signing, 50% upon delivery of month 1 videos.\n' +
+        '• Guarantee: 2 rounds of revisions per asset to guarantee 100% brand satisfaction.'
+      );
+      doc.moveDown(1.5);
+
+      doc.addPage();
+    }
+
+    // --- MODULE 4: VERIFIED DIRECTORY ---
+    doc.fontSize(18).fillColor('#0F172A').text(isMegaSystem ? 'MODULE 4: VERIFIED GLOBAL B2B DECISION MAKERS' : 'LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
+    doc.fontSize(10).fillColor('#64748B').text(`${searchData.leads.length} Verified Records - ${searchData.query}`, { align: 'center' });
     doc.moveDown(1.5);
 
-    // --- MODULE 1: THE STEP-BY-STEP "HOW TO CLOSE" PLAYBOOK ---
-    doc.fontSize(13).fillColor('#0F172A').text('MODULE 1: THE STEP-BY-STEP CLIENT CLOSING PLAYBOOK', { underline: true });
-    doc.moveDown(0.4);
-    doc.fontSize(9.5).fillColor('#334155').text(
-      '1. Target Selection: Filter leads by your specific niche (e.g. Dubai Luxury Real Estate for video editors, US Solar Contractors for web design/funnels). Pick 15-20 decision makers per day.\n' +
-      '2. The "Trojan Horse" Audit Strategy: NEVER send generic "Hi, hire me" messages. Instead, create a 30-second personalized audit, sample reel, or visual redesign based on their public social media or website.\n' +
-      '3. Friction-Free WhatsApp Outreach: Reach out directly on WhatsApp or verified email during their local business hours (10 AM - 4 PM local time).\n' +
-      '4. Soft Close & Retainer Offer: Offer to do the first 1-2 deliverables as a risk-free pilot or offer 50% deposit terms. Aim for a $500 - $1,500/month recurring retainer.'
-    );
-    doc.moveDown(1.2);
+    searchData.leads.forEach((lead, i) => {
+      doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
+      doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ${lead.rating}/5.0 (${lead.reviewsCount} reviews)`);
+      doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
+      doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
+      doc.fontSize(9).fillColor('#059669').text(`   Website: ${lead.website}`);
+      doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
+      doc.moveDown(0.8);
+    });
 
-    // --- MODULE 2: PLUG-AND-PLAY COLD OUTREACH SCRIPTS ---
-    doc.fontSize(13).fillColor('#0F172A').text('MODULE 2: COPY-PASTE OUTREACH SCRIPTS (35%+ REPLY RATE)', { underline: true });
-    doc.moveDown(0.4);
-    doc.fontSize(10).fillColor('#1E293B').text('SCRIPT A: WhatsApp Pitch for Video Editors / Reel Creators');
-    doc.fontSize(9).fillColor('#4338CA').text(
-      '"Hey [Name], saw your listing/post for [Property/Clinic/Business]. Loved the aesthetics!\n' +
-      'I noticed your Instagram reels could get 3x more buyer inquiries with dynamic pacing and luxury animated captions. I actually edited a quick 20-second sample reel for your brand to show you what I mean: [Loom / Drive Link].\n' +
-      'No strings attached — feel free to post it! If you like the style, I can edit 12 reels like this for you every month for $500. Let me know if you want to test it!"'
-    );
-    doc.moveDown(0.8);
-
-    doc.fontSize(10).fillColor('#1E293B').text('SCRIPT B: Cold Email Pitch for Web & Marketing Agencies');
-    doc.fontSize(9).fillColor('#4338CA').text(
-      '"Subject: Quick suggestion for [Company Name] website/leads\n' +
-      'Hi [Name],\n' +
-      'I was looking through local businesses in [City] and noticed your website takes ~5s to load on mobile and is missing a direct WhatsApp booking widget.\n' +
-      'I put together a 60-second video walkthrough showing 3 tweaks that could boost your booking conversion by 25%: [Link].\n' +
-      'Would you be open to a quick 5-minute chat this Thursday to see if it makes sense to implement this for you? Best, [Your Name]"'
-    );
-    doc.moveDown(0.8);
-
-    doc.fontSize(10).fillColor('#1E293B').text('SCRIPT C: The 48-Hour Polite Follow-Up');
-    doc.fontSize(9).fillColor('#4338CA').text(
-      '"Hey [Name], just bumping this in case it got buried under your messages! Did you get a chance to see the sample video I made for you? Either way, keep up the great work with [Company Name]!"'
-    );
-    doc.moveDown(1.2);
-
-    // --- MODULE 3: CLIENT PROPOSAL & AGREEMENT TEMPLATE ---
-    doc.fontSize(13).fillColor('#0F172A').text('MODULE 3: HIGH-TICKET CLIENT PROPOSAL & AGREEMENT TEMPLATE', { underline: true });
-    doc.moveDown(0.4);
-    doc.fontSize(9).fillColor('#334155').text(
-      '• Scope of Work: 12-16 High-Retention Reels / Month (Scripting, Editing, Subtitles, Revisions).\n' +
-      '• Deliverable Turnaround: 48 hours per video upon raw footage receipt.\n' +
-      '• Investment: $650 USD / Month (Paid via Stripe, Wise, or Direct Bank Wire).\n' +
-      '• Payment Terms: 50% upon agreement signing, 50% upon delivery of month 1 videos.\n' +
-      '• Guarantee: 2 rounds of revisions per asset to guarantee 100% brand satisfaction.'
-    );
-    doc.moveDown(1.5);
-
-    doc.addPage();
+    return doc.end();
   }
-
-  // --- MODULE 4: VERIFIED DIRECTORY ---
-  doc.fontSize(18).fillColor('#0F172A').text(isMegaSystem ? 'MODULE 4: VERIFIED GLOBAL B2B DECISION MAKERS' : 'LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
-  doc.fontSize(10).fillColor('#64748B').text(`${searchData.leads.length} Verified Records - ${searchData.query}`, { align: 'center' });
-  doc.moveDown(1.5);
-
-  searchData.leads.forEach((lead, i) => {
-    doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
-    doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ${lead.rating}/5.0 (${lead.reviewsCount} reviews)`);
-    doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
-    doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
-    doc.fontSize(9).fillColor('#059669').text(`   Website: ${lead.website}`);
-    doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
-    doc.moveDown(0.8);
-  });
-
-  return doc.end();
-
-  // Professional headers with distinct columns for seamless sorting in Microsoft Excel / Sheets
-  const headers = [
-    'Lead ID',
-    'Company / Agent Name',
-    'Category / Specialization',
-    'Direct Phone Number',
-    'Verified Email Address',
-    'Official Website',
-    'Street Address',
-    'City',
-    'Country / Region',
-    'Google Rating',
-    'Total Reviews',
-    'Verification Status'
-  ];
-
-  const escapeCSV = (val) => {
-    if (val === null || val === undefined) return '""';
-    const str = String(val).replace(/"/g, '""');
-    return `"${str}"`;
-  };
-
-  const headerLine = headers.map(escapeCSV).join(',');
-  const dataLines = searchData.leads.map(lead => [
-    escapeCSV(lead.id),
-    escapeCSV(lead.name),
-    escapeCSV(lead.category),
-    escapeCSV(lead.phone),
-    escapeCSV(lead.email),
-    escapeCSV(lead.website),
-    escapeCSV(lead.address),
-    escapeCSV(lead.city || searchData.city),
-    escapeCSV(lead.country || searchData.country || 'Global'),
-    escapeCSV(lead.rating),
-    escapeCSV(lead.reviewsCount),
-    escapeCSV('Verified Direct Contact')
-  ].join(','));
-
-  // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers, Sheets & AI tools (ChatGPT/Gemini) parse with 100% precision
-  const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
-  const csvBuffer = Buffer.concat([bom, Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8')]);
-  const filename = searchData.isBundle
-    ? `LeadPulse_1000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records.csv`
-    : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory.csv`;
-
-  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-  res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-  res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
-  res.status(200).send(csvBuffer);
 });
 
 // 4.5. Free Direct Sample Downloads Phased Out (Protected - Micro Starter Pack ₹20 Replaces It)

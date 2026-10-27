@@ -1585,14 +1585,18 @@
       </button>
     </div>
 
-    <!-- Direct Download Buttons (Guaranteed PDF + Native Excel) -->
+    <!-- Direct Download Buttons (Guaranteed Clean Excel + PDF + CSV) -->
     <div class="mt-3 pt-3 border-t border-slate-800 space-y-2">
-      <a id="manualDownloadPdf" href="#" target="_blank" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-rose-500 via-pink-600 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg transition">
-        <span>📄 Open / Download Official PDF (Opens on all Phones)</span>
+      <a id="manualDownloadXlsx" href="#" download="LeadPulse_1000_Global_Mega_Directory.xlsx" class="w-full py-2.5 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 transition cursor-pointer">
+        <span>📊 Download Clean Excel (.xlsx)</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      </a>
+      <a id="manualDownloadPdf" href="#" target="_blank" download="LeadPulse_1000_Closing_System_Playbook.pdf" class="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 border border-slate-700 transition cursor-pointer">
+        <span>📄 Open / Download PDF Playbook</span>
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
       </a>
-      <a id="manualDownloadXlsx" href="#" class="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 border border-slate-700 transition">
-        <span>📊 Download Excel (.xlsx) (Optional for PC)</span>
+      <a id="manualDownloadCsv" href="#" download="LeadPulse_1000_Global_Mega_Directory.csv" class="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs flex items-center justify-center gap-1.5 border border-slate-700 transition cursor-pointer">
+        <span>📁 Download Raw CSV (.csv)</span>
       </a>
     </div>
 
@@ -2070,10 +2074,6 @@
           });
 
           const banner = document.getElementById('downloadBanner');
-          const manualBtn = document.getElementById('manualDownloadLink');
-          if (manualBtn && data.downloadUrl) {
-            manualBtn.href = data.downloadUrl;
-          }
           const manualXlsx = document.getElementById('manualDownloadXlsx');
           if (manualXlsx && data.downloadUrlXlsx) {
             manualXlsx.href = data.downloadUrlXlsx;
@@ -2082,18 +2082,22 @@
           if (manualPdf && data.downloadUrlPdf) {
             manualPdf.href = data.downloadUrlPdf;
           }
+          const manualCsv = document.getElementById('manualDownloadCsv');
+          if (manualCsv && data.downloadUrlCsv) {
+            manualCsv.href = data.downloadUrlCsv;
+          }
           if (banner) {
             banner.classList.remove('hidden');
           }
 
-          // Trigger rock-solid PDF download & open (100% universal compatibility on every phone & PC)
-          const pdfUrl = data.downloadUrlPdf || data.downloadUrl;
+          // Trigger clean native Excel download (100% compatible with Excel app on Android & iOS)
+          const targetUrl = data.downloadUrlXlsx || data.downloadUrl;
           const fname = (activeCheckoutType === 'growth_500')
-            ? 'LeadPulse_500_VIP_Leads_Rotated_Pack.pdf'
+            ? 'LeadPulse_500_VIP_Leads_Rotated_Pack.xlsx'
             : ((activeCheckoutType === 'starter_50' || activeCheckoutType === 'starter_100')
-                ? 'LeadPulse_100_Starter_Leads_Rotated_Pack.pdf'
-                : 'LeadPulse_1000_Global_Mega_Directory.pdf');
-          await triggerClientDownload(pdfUrl, fname);
+                ? 'LeadPulse_100_Starter_Leads_Rotated_Pack.xlsx'
+                : 'LeadPulse_1000_Global_Mega_Directory.xlsx');
+          await triggerClientDownload(targetUrl, fname);
         } else {
           alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
         }
