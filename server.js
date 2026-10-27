@@ -403,16 +403,15 @@ app.post('/api/search', async (req, res) => {
 
 // --- Single-Use & Persistent Coupon System ---
 
-// Rotating offset for ₹20 Starter Pack (50 unique leads replaced after every purchase)
+// Rotating offset for ₹20 Starter Pack (100 unique leads replaced after every purchase)
 let starterBatchOffset = 0;
-function getNext50StarterLeads() {
+function getNextStarterLeads(batchSize = 100) {
   const all = generateMegaBundleLeads();
-  const batchSize = 50;
   const currentOffset = starterBatchOffset % (all.length - batchSize);
   starterBatchOffset = (starterBatchOffset + batchSize) % (all.length - batchSize);
   
   const leads = all.slice(currentOffset, currentOffset + batchSize);
-  console.log(`[STARTER PACK ROTATION] Dispatched 50 unique leads from offset ${currentOffset} to ${currentOffset + batchSize}. Next offset: ${starterBatchOffset}`);
+  console.log(`[STARTER PACK ROTATION] Dispatched ${batchSize} unique leads from offset ${currentOffset} to ${currentOffset + batchSize}. Next offset: ${starterBatchOffset}`);
   return leads;
 }
 
@@ -552,16 +551,16 @@ app.post('/api/create-order', async (req, res) => {
   let orderDescription = isMegaBundle
     ? `LeadPulse 4,000+ Mega Vault (₹${finalAmountINR})`
     : (isStarterPack 
-        ? `LeadPulse 50 Starter Leads (₹${finalAmountINR})` 
+        ? `LeadPulse 100 Starter Leads (₹${finalAmountINR})` 
         : `LeadPulse B2B Leads Export (₹${finalAmountINR})`);
 
   if (isStarterPack) {
     activeSessionId = `starter_50_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-    const starterLeads = getNext50StarterLeads();
+    const starterLeads = getNextStarterLeads(100);
     searchCache.set(activeSessionId, {
       isBundle: true,
       bundleType: 'starter_50',
-      query: '50 Verified B2B Starter Leads',
+      query: '100 Verified B2B Starter Leads',
       city: 'Global (UAE, USA, Canada, UK, Australia, India)',
       country: 'Global',
       totalCount: starterLeads.length,
@@ -706,11 +705,11 @@ app.get('/api/download-csv', (req, res) => {
       };
       searchCache.set(searchId, searchData);
     } else if (searchId.startsWith('starter_50_')) {
-      const starterLeads = getNext50StarterLeads();
+      const starterLeads = getNextStarterLeads(100);
       searchData = {
         isBundle: true,
         bundleType: 'starter_50',
-        query: '50 Verified B2B Starter Leads',
+        query: '100 Verified B2B Starter Leads',
         city: 'Global (UAE, USA, Canada, UK, Australia, India)',
         country: 'Global',
         totalCount: starterLeads.length,
@@ -728,7 +727,7 @@ app.get('/api/download-csv', (req, res) => {
   }
 
   const baseFilename = searchData.bundleType === 'starter_50'
-    ? 'LeadPulse_50_Starter_Leads_Rotated_Pack'
+    ? 'LeadPulse_100_Starter_Leads_Rotated_Pack'
     : (searchData.isBundle
         ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records`
         : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory`);
