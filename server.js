@@ -502,7 +502,7 @@ function validateCoupon(rawCode, originalAmountINR, bundleType = 'mega_1000') {
   }
 
   if (coupon.allowedBundleTypes && !coupon.allowedBundleTypes.includes(bundleType)) {
-    return { valid: false, error: 'This coupon code is only valid for the Complete Client Closing Kit (₹499).' };
+    return { valid: false, error: 'This coupon code is only valid for the Complete Client Closing Kit (₹199).' };
   }
 
   if (coupon.minOrderAmount && originalAmountINR < coupon.minOrderAmount) {
