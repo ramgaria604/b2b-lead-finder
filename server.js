@@ -486,7 +486,7 @@ function saveCoupons(coupons) {
   }
 }
 
-function validateCoupon(rawCode, originalAmountINR) {
+function validateCoupon(rawCode, originalAmountINR, bundleType = 'mega_4000') {
   if (!rawCode) return null;
   const inputCode = String(rawCode).trim().toUpperCase();
   const normalizedCode = inputCode.replace(/\s+/g, '');
@@ -495,6 +495,18 @@ function validateCoupon(rawCode, originalAmountINR) {
 
   if (!coupon) {
     return { valid: false, error: 'Invalid coupon code.' };
+  }
+
+  if (bundleType === 'starter_50' || bundleType === 'starter_100') {
+    return { valid: false, error: 'Coupons cannot be applied to the ₹20 Micro Starter Pack.' };
+  }
+
+  if (coupon.allowedBundleTypes && !coupon.allowedBundleTypes.includes(bundleType)) {
+    return { valid: false, error: 'This coupon code is only valid for the Complete Client Closing Kit (₹499).' };
+  }
+
+  if (coupon.minOrderAmount && originalAmountINR < coupon.minOrderAmount) {
+    return { valid: false, error: `This coupon is only valid on orders of ₹${coupon.minOrderAmount} or more.` };
   }
 
   if (coupon.maxUses && (coupon.timesUsed || 0) >= coupon.maxUses) {
@@ -562,9 +574,17 @@ app.post('/api/validate-coupon', (req, res) => {
   const isMega = bundleType === 'mega_4000';
   const isGrowth500 = bundleType === 'growth_500';
   const isStarter = bundleType === 'starter_50' || bundleType === 'starter_100';
-  const originalPriceINR = isMega ? 499 : (isGrowth500 ? 100 : (isStarter ? 20 : 149));
 
-  const result = validateCoupon(code, originalPriceINR);
+  if (isStarter) {
+    return res.status(400).json({ success: false, error: 'Coupons cannot be applied to the ₹20 Micro Starter Pack.' });
+  }
+
+  if (!isMega) {
+    return res.status(400).json({ success: false, error: 'The RONAK100 coupon is exclusively valid for the Complete Client Closing System (₹499 Pack).' });
+  }
+
+  const originalPriceINR = 499;
+  const result = validateCoupon(code, originalPriceINR, bundleType);
   if (!result || !result.valid) {
     return res.status(400).json({ success: false, error: result ? result.error : 'Invalid coupon code.' });
   }
@@ -592,7 +612,13 @@ app.post('/api/create-order', async (req, res) => {
   let appliedCouponCode = null;
 
   if (couponCode) {
-    const val = validateCoupon(couponCode, baseAmountINR);
+    if (isStarterPack) {
+      return res.status(400).json({ error: 'Coupons cannot be applied to the ₹20 Micro Starter Pack.' });
+    }
+    if (!isMegaBundle) {
+      return res.status(400).json({ error: 'Coupon codes are exclusively valid for the Complete Client Closing System (₹499).' });
+    }
+    const val = validateCoupon(couponCode, baseAmountINR, bundleType);
     if (!val || !val.valid) {
       return res.status(400).json({ error: val ? val.error : 'Invalid or expired coupon code.' });
     }

@@ -1493,8 +1493,8 @@
         </div>
       </div>
 
-      <!-- Coupon / Promo Code Input Box -->
-      <div class="mb-5">
+      <!-- Coupon / Promo Code Input Box (Only for ₹499 Complete Closing Kit) -->
+      <div class="mb-5 hidden" id="couponSectionContainer">
         <div class="flex items-center gap-2">
           <div class="relative flex-1">
             <input 
@@ -1871,6 +1871,8 @@
     function openGrowth500Modal() {
       activeCheckoutType = 'growth_500';
       resetCouponState();
+      const cSec = document.getElementById('couponSectionContainer');
+      if (cSec) cSec.classList.add('hidden');
       document.getElementById('modalDatasetTitle').innerText = 'Unlock 500 Verified VIP Leads';
       document.getElementById('modalDatasetSubtitle').innerText = 'Creator Growth Pack: ₹100 Only. Freshly rotated 500 decision makers (Official PDF + Excel included).';
       document.getElementById('modalDatasetLabel').innerText = '500 Fresh Leads (Rotated Pack)';
@@ -1898,6 +1900,8 @@
         function openStarter50Modal() {
       activeCheckoutType = 'starter_50';
       resetCouponState();
+      const cSec = document.getElementById('couponSectionContainer');
+      if (cSec) cSec.classList.add('hidden');
       document.getElementById('modalDatasetTitle').innerText = 'Unlock 100 Verified Starter Leads';
       document.getElementById('modalDatasetSubtitle').innerText = 'Micro Starter Pack: ₹20 Only. Freshly rotated 100 decision makers (Official PDF + Excel included).';
       document.getElementById('modalDatasetLabel').innerText = '100 Fresh Leads (Rotated Pack)';
@@ -1925,6 +1929,8 @@
     function openMegaBundleModal() {
       activeCheckoutType = 'mega_4000';
       resetCouponState();
+      const cSec = document.getElementById('couponSectionContainer');
+      if (cSec) cSec.classList.remove('hidden');
       document.getElementById('modalDatasetTitle').innerText = 'Unlock Complete Client Closing Kit & 4,000+ Leads';
       document.getElementById('modalDatasetSubtitle').innerText = '🌟 Complete 5-in-1 System: ₹499 Only • Leads + Pitch Scripts + Proposals + Closing Guide';
       document.getElementById('modalDatasetLabel').innerText = 'Complete Client Closing Kit (5-in-1 System)';
@@ -1941,6 +1947,8 @@
     function openUnlockModal() {
       activeCheckoutType = 'search';
       resetCouponState();
+      const cSec = document.getElementById('couponSectionContainer');
+      if (cSec) cSec.classList.add('hidden');
       if (!currentSearchData) return;
       document.getElementById('modalDatasetTitle').innerText = 'Unlock Full Dataset';
       document.getElementById('modalDatasetSubtitle').innerText = `Complete ${currentSearchData.totalCount} ${currentSearchData.query} in ${currentSearchData.city} dataset.`;
