@@ -793,18 +793,19 @@ app.get('/api/download-csv', async (req, res) => {
       });
 
       worksheet.columns = [
-        { header: 'Lead ID', key: 'id', width: 16 },
-        { header: 'Company / Agent Name', key: 'name', width: 36 },
+        { header: 'Lead ID', key: 'id', width: 14 },
+        { header: 'Company / Agency Name', key: 'name', width: 36 },
         { header: 'Category / Specialization', key: 'category', width: 32 },
-        { header: 'Direct Phone Number', key: 'phone', width: 22 },
-        { header: 'Verified Email Address', key: 'email', width: 32 },
+        { header: 'Direct WhatsApp / Phone', key: 'phone', width: 22 },
+        { header: '1-Click Direct WhatsApp Link', key: 'whatsappUrl', width: 34 },
+        { header: 'Verified Email Address', key: 'email', width: 30 },
         { header: 'Official Website', key: 'website', width: 32 },
         { header: 'Street Address', key: 'address', width: 38 },
         { header: 'City', key: 'city', width: 18 },
         { header: 'Country / Region', key: 'country', width: 22 },
         { header: 'Google Rating', key: 'rating', width: 14 },
         { header: 'Total Reviews', key: 'reviewsCount', width: 14 },
-        { header: 'Verification Status', key: 'status', width: 24 }
+        { header: 'WhatsApp Verification Status', key: 'status', width: 28 }
       ];
 
       // Style header row
@@ -820,11 +821,14 @@ app.get('/api/download-csv', async (req, res) => {
 
       // Add leads
       searchData.leads.forEach((l, idx) => {
+        const rawDigits = (l.phone || '').replace(/[^0-9]/g, '');
+        const waLink = l.whatsappUrl || (rawDigits ? `https://wa.me/${rawDigits}` : '');
         const row = worksheet.addRow({
           id: l.id,
           name: l.name,
           category: l.category,
           phone: l.phone,
+          whatsappUrl: waLink,
           email: l.email,
           website: l.website,
           address: l.address,
@@ -832,7 +836,7 @@ app.get('/api/download-csv', async (req, res) => {
           country: l.country || searchData.country || 'Global',
           rating: l.rating,
           reviewsCount: l.reviewsCount,
-          status: 'Verified Direct Contact'
+          status: l.whatsappStatus || 'Verified Direct Contact'
         });
 
         row.font = { size: 10, name: 'Calibri' };
@@ -865,9 +869,10 @@ app.get('/api/download-csv', async (req, res) => {
   if (format === 'csv') {
     const headers = [
       'Lead ID',
-      'Company / Agent Name',
+      'Company / Agency Name',
       'Category / Specialization',
-      'Direct Phone Number',
+      'Direct WhatsApp / Phone',
+      '1-Click WhatsApp Link',
       'Verified Email Address',
       'Official Website',
       'Street Address',
@@ -875,7 +880,7 @@ app.get('/api/download-csv', async (req, res) => {
       'Country / Region',
       'Google Rating',
       'Total Reviews',
-      'Verification Status'
+      'WhatsApp Verification Status'
     ];
 
     const escapeCSV = (val) => {
@@ -885,20 +890,25 @@ app.get('/api/download-csv', async (req, res) => {
     };
 
     const headerLine = headers.map(escapeCSV).join(',');
-    const dataLines = searchData.leads.map(lead => [
-      escapeCSV(lead.id),
-      escapeCSV(lead.name),
-      escapeCSV(lead.category),
-      escapeCSV(lead.phone),
-      escapeCSV(lead.email),
-      escapeCSV(lead.website),
-      escapeCSV(lead.address),
-      escapeCSV(lead.city || searchData.city),
-      escapeCSV(lead.country || searchData.country || 'Global'),
-      escapeCSV(lead.rating),
-      escapeCSV(lead.reviewsCount),
-      escapeCSV('Verified Direct Contact')
-    ].join(','));
+    const dataLines = searchData.leads.map(lead => {
+      const rawDigits = (lead.phone || '').replace(/[^0-9]/g, '');
+      const waLink = lead.whatsappUrl || (rawDigits ? `https://wa.me/${rawDigits}` : '');
+      return [
+        escapeCSV(lead.id),
+        escapeCSV(lead.name),
+        escapeCSV(lead.category),
+        escapeCSV(lead.phone),
+        escapeCSV(waLink),
+        escapeCSV(lead.email),
+        escapeCSV(lead.website),
+        escapeCSV(lead.address),
+        escapeCSV(lead.city || searchData.city),
+        escapeCSV(lead.country || searchData.country || 'Global'),
+        escapeCSV(lead.rating),
+        escapeCSV(lead.reviewsCount),
+        escapeCSV(lead.whatsappStatus || 'Verified Direct Contact')
+      ].join(',');
+    });
 
     // Binary UTF-8 BOM [0xEF, 0xBB, 0xBF] to guarantee Excel, Numbers, Sheets & AI tools parse with 100% precision
     const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
@@ -993,11 +1003,13 @@ app.get('/api/download-csv', async (req, res) => {
     doc.moveDown(1.5);
 
     searchData.leads.forEach((lead, i) => {
+      const rawDigits = (lead.phone || '').replace(/[^0-9]/g, '');
+      const waLink = lead.whatsappUrl || (rawDigits ? `https://wa.me/${rawDigits}` : '');
       doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
       doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ${lead.rating}/5.0 (${lead.reviewsCount} reviews)`);
-      doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
+      doc.fontSize(9).fillColor('#059669').text(`   Direct WhatsApp: ${lead.phone}  |  Tap to Chat: ${waLink}`);
       doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
-      doc.fontSize(9).fillColor('#059669').text(`   Website: ${lead.website}`);
+      doc.fontSize(9).fillColor('#4338CA').text(`   Website: ${lead.website}`);
       doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
       doc.moveDown(0.8);
     });

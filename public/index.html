@@ -2123,7 +2123,11 @@
               <td class="py-2.5 px-3 text-amber-400 font-bold">${lead.id}</td>
               <td class="py-2.5 px-3 text-white font-sans font-semibold">${lead.name}</td>
               <td class="py-2.5 px-3 text-slate-300 font-sans">${lead.category}</td>
-              <td class="py-2.5 px-3 text-indigo-300">${lead.phone}</td>
+              <td class="py-2.5 px-3">
+                <a href="${lead.whatsappUrl || 'https://wa.me/' + (lead.phone || '').replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 font-bold transition text-[11px]" title="Chat directly on WhatsApp">
+                  <span>💬 ${lead.phone}</span>
+                </a>
+              </td>
               <td class="py-2.5 px-3 text-slate-400">${lead.email}</td>
               <td class="py-2.5 px-3 text-slate-300 font-sans">${lead.city}, ${lead.countryFlag || ''}</td>
               <td class="py-2.5 px-3 text-amber-400 font-bold">★ ${lead.rating}</td>
@@ -2247,7 +2251,7 @@
               </div>
               <div class="text-[11px] text-slate-400">${lead.category} &bull; <strong class="text-slate-300">${lead.city}, ${lead.country || ''}</strong></div>
               <div class="flex items-center gap-4 text-[11px] pt-1 flex-wrap">
-                <span class="text-indigo-400 font-mono font-medium">📞 ${lead.phone}</span>
+                <a href="${lead.whatsappUrl || 'https://wa.me/' + (lead.phone || '').replace(/[^0-9]/g, '')}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 font-mono font-bold hover:underline inline-flex items-center gap-1">💬 WhatsApp: ${lead.phone}</a>
                 <span class="text-slate-300 font-mono">✉️ ${lead.email}</span>
                 <a href="${lead.website}" target="_blank" rel="noopener noreferrer" class="text-emerald-400 hover:underline">🔗 ${lead.website ? lead.website.replace('https://', '') : ''}</a>
               </div>
