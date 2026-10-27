@@ -1495,26 +1495,33 @@
 
       <!-- Coupon / Promo Code Input Box (Only for ₹499 Complete Closing Kit) -->
       <div class="mb-5 hidden" id="couponSectionContainer">
-        <div class="flex items-center gap-2">
-          <div class="relative flex-1">
-            <input 
-              type="text" 
-              id="couponInput" 
-              placeholder="Promo Code (e.g. RONAK100)" 
-              class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-xl px-3.5 py-2.5 text-xs text-white uppercase tracking-wider placeholder-slate-500 outline-none transition"
-              onkeydown="if(event.key==='Enter') applyCouponCode()"
-            />
-          </div>
-          <button 
-            type="button" 
-            id="applyCouponBtn"
-            onclick="applyCouponCode()" 
-            class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white font-bold text-xs rounded-xl border border-slate-700/80 transition cursor-pointer shrink-0"
-          >
-            Apply
+        <div id="couponToggleLink" class="text-left">
+          <button type="button" onclick="toggleCouponField()" class="text-[11px] text-slate-400 hover:text-amber-300 font-medium cursor-pointer transition flex items-center gap-1">
+            <span>🏷️</span> <span class="underline underline-offset-2">Have a secret promo code?</span>
           </button>
         </div>
-        <div id="couponMessage" class="hidden text-[11px] mt-1.5 font-medium px-1"></div>
+        <div id="couponInputWrapper" class="hidden mt-2">
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <input 
+                type="text" 
+                id="couponInput" 
+                placeholder="Enter promo code" 
+                class="w-full bg-slate-950 border border-slate-800 focus:border-amber-500 rounded-xl px-3.5 py-2.5 text-xs text-white uppercase tracking-wider placeholder-slate-500 outline-none transition"
+                onkeydown="if(event.key==='Enter') applyCouponCode()"
+              />
+            </div>
+            <button 
+              type="button" 
+              id="applyCouponBtn"
+              onclick="applyCouponCode()" 
+              class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white font-bold text-xs rounded-xl border border-slate-700/80 transition cursor-pointer shrink-0"
+            >
+              Apply
+            </button>
+          </div>
+          <div id="couponMessage" class="hidden text-[11px] mt-1.5 font-medium px-1"></div>
+        </div>
       </div>
 
       <!-- Payment Button -->
@@ -1671,6 +1678,15 @@
     let appliedCouponCode = null;
     let appliedCouponData = null;
 
+    function toggleCouponField() {
+      const wrapper = document.getElementById('couponInputWrapper');
+      const link = document.getElementById('couponToggleLink');
+      if (wrapper) wrapper.classList.remove('hidden');
+      if (link) link.classList.add('hidden');
+      const input = document.getElementById('couponInput');
+      if (input) input.focus();
+    }
+
     function resetCouponState() {
       appliedCouponCode = null;
       appliedCouponData = null;
@@ -1683,6 +1699,10 @@
       }
       const row = document.getElementById('couponDiscountRow');
       if (row) row.classList.add('hidden');
+      const wrapper = document.getElementById('couponInputWrapper');
+      if (wrapper) wrapper.classList.add('hidden');
+      const link = document.getElementById('couponToggleLink');
+      if (link) link.classList.remove('hidden');
     }
 
     async function applyCouponCode() {
