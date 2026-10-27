@@ -1598,21 +1598,21 @@
             🎉 1,000+ Verified Lead Vault & Closing Kit Unlocked!
           </p>
           <div class="mt-2.5 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-300">
-            ⚡ <b>Auto-download has started in your browser!</b><br/>
-            If download didn't start automatically on your phone, tap below:
+            ⚡ <b>Instant auto-download of your PDF Playbook & Excel has started!</b><br/>
+            If download didn't trigger automatically on your phone, tap below:
           </div>
         </div>
 
         <!-- 1-Click Action Buttons -->
-        <div class="space-y-2 pt-1 text-left">
-          <a id="modalSuccessDownloadXlsx" href="#" download="LeadPulse_Complete_Client_Closing_Kit_1000_Directory.xlsx" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25 transition cursor-pointer">
-            <span>📊 Download Clean Excel (.xlsx) [Instant]</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <div class="space-y-2.5 pt-1 text-left">
+          <a id="modalSuccessDownloadPdf" href="#" target="_blank" download="LeadPulse_1000_Closing_System_Playbook.pdf" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl shadow-amber-500/25 transition cursor-pointer">
+            <span>📄 Download Official PDF Closing Playbook [Instant]</span>
+            <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           </a>
 
-          <a id="modalSuccessDownloadPdf" href="#" target="_blank" download="LeadPulse_1000_Closing_System_Playbook.pdf" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs flex items-center justify-center gap-2 border border-amber-500/30 transition cursor-pointer">
-            <span>📄 Open / Download PDF Playbook</span>
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          <a id="modalSuccessDownloadXlsx" href="#" download="LeadPulse_Complete_Client_Closing_Kit_1000_Directory.xlsx" class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 transition cursor-pointer">
+            <span>📊 Download Clean Excel (.xlsx) [1,000+ Leads]</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
           </a>
 
           <a id="modalSuccessDownloadCsv" href="#" download="LeadPulse_1000_Global_Mega_Directory.csv" class="w-full py-2 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-medium text-xs flex items-center justify-center gap-2 border border-slate-800 transition cursor-pointer">
@@ -2203,14 +2203,21 @@
             banner.classList.remove('hidden');
           }
 
-          // Trigger clean native Excel download (Instant 2ms RAM buffer delivery)
+          // 1. Trigger INSTANT automatic download of the Official PDF Closing Playbook!
+          if (data.downloadUrlPdf) {
+            triggerInstantDownload(data.downloadUrlPdf, 'LeadPulse_1000_Closing_System_Playbook.pdf');
+          }
+
+          // 2. Trigger clean native Excel download (Instant RAM buffer delivery) 600ms later so both files save cleanly!
           const targetUrl = data.downloadUrlXlsx || data.downloadUrl;
           const fname = (activeCheckoutType === 'growth_500')
             ? 'LeadPulse_500_VIP_Leads_Rotated_Pack.xlsx'
             : ((activeCheckoutType === 'starter_50' || activeCheckoutType === 'starter_100')
                 ? 'LeadPulse_100_Starter_Leads_Rotated_Pack.xlsx'
                 : 'LeadPulse_Complete_Client_Closing_Kit_1000_Directory.xlsx');
-          triggerInstantDownload(targetUrl, fname);
+          setTimeout(() => {
+            triggerInstantDownload(targetUrl, fname);
+          }, 600);
         } else {
           closePaymentSuccessModal();
           alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));

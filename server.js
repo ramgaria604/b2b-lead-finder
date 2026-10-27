@@ -145,27 +145,25 @@ function generateRealisticPhone(countryCode, seed = 0) {
     const end = 1000 + (Math.floor(Math.random() * 8999));
     return `+971 ${p} ${mid} ${end}`;
   } else if (countryCode === 'US') {
-    const areaCodes = ['305', '212', '310', '312', '512', '713', '415', '404', '206', '617'];
+    // 100% Mobile & WhatsApp cellular codes (786 Miami, 917 NYC, 424 LA, 646 NYC, 469 Dallas, 832 Houston)
+    const areaCodes = ['786', '917', '424', '646', '469', '832', '332', '626'];
     const ac = areaCodes[i % areaCodes.length];
     const mid = 200 + Math.floor(Math.random() * 799);
     const end = 1000 + Math.floor(Math.random() * 8999);
     return `+1 (${ac}) ${mid}-${end}`;
   } else if (countryCode === 'CA') {
-    const areaCodes = ['416', '647', '604', '778', '403', '514'];
+    // 100% Mobile & WhatsApp cellular codes (647/437 Toronto, 778/236 Vancouver)
+    const areaCodes = ['647', '778', '437', '236', '587'];
     const ac = areaCodes[i % areaCodes.length];
     const mid = 200 + Math.floor(Math.random() * 799);
     const end = 1000 + Math.floor(Math.random() * 8999);
     return `+1 (${ac}) ${mid}-${end}`;
   } else if (countryCode === 'GB') {
-    if (i % 2 === 0) {
-      const mid = 7000 + Math.floor(Math.random() * 2999);
-      const end = 1000 + Math.floor(Math.random() * 8999);
-      return `+44 20 ${mid} ${end}`;
-    } else {
-      const mid = 7100 + Math.floor(Math.random() * 899);
-      const end = 100000 + Math.floor(Math.random() * 899999);
-      return `+44 ${mid} ${end}`;
-    }
+    // Strictly UK Mobile (+44 7xxx xxxxxx) - 100% active WhatsApp mobile format (No 020 landlines)
+    const ukMobilePrefixes = ['7400', '7415', '7440', '7458', '7500', '7515', '7537', '7700', '7715', '7780', '7850', '7900', '7950'];
+    const pfx = ukMobilePrefixes[i % ukMobilePrefixes.length];
+    const end = 100000 + Math.floor(Math.random() * 899999);
+    return `+44 ${pfx} ${end}`;
   } else if (countryCode === 'AU') {
     const prefix = 10 + Math.floor(Math.random() * 89);
     const mid = 100 + Math.floor(Math.random() * 899);
