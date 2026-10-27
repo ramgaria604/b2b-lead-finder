@@ -1334,9 +1334,9 @@
   <!-- 🔍 Live Sample Leads In-Browser Viewer Modal -->
   
   <!-- 🎁 Instagram Story Free 500 Leads Claim Modal -->
-  <div id="claimFreeModal" class="hidden fixed inset-0 z-50 bg-black/85 blur-glass flex items-center justify-center p-4">
+  <div id="claimFreeModal" onclick="if(event.target === this) closeClaimFreeModal()" class="hidden fixed inset-0 z-50 bg-black/85 blur-glass flex items-center justify-center p-4">
     <div class="bg-slate-900 border-2 border-pink-500/40 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative">
-      <button onclick="closeClaimFreeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg">
+      <button type="button" onclick="closeClaimFreeModal()" class="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition cursor-pointer z-20" aria-label="Close modal">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
 
@@ -1402,7 +1402,7 @@
     </div>
   </div>
 
-  <div id="sampleViewerModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
+  <div id="sampleViewerModal" onclick="if(event.target === this) closeSampleViewerModal()" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full max-h-[85vh] flex flex-col shadow-2xl relative">
       <div class="p-5 border-b border-slate-800 flex items-center justify-between">
         <div>
@@ -1412,7 +1412,7 @@
           </h3>
           <p class="text-xs text-slate-400 mt-0.5">Inspect verified data columns and phone/email quality. Unlock the Complete 1,000+ Leads Vault & Closing Kit for just ₹199.</p>
         </div>
-        <button onclick="closeSampleViewerModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+        <button type="button" onclick="closeSampleViewerModal()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition cursor-pointer" aria-label="Close modal">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
@@ -1439,9 +1439,9 @@
   </div>
 
   <!-- Checkout / Unlock Modal with Razorpay + UPI -->
-  <div id="unlockModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
+  <div id="unlockModal" onclick="if(event.target === this) closeUnlockModal()" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative">
-      <button onclick="closeUnlockModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white p-1 rounded-lg">
+      <button type="button" onclick="closeUnlockModal()" class="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition cursor-pointer z-20" aria-label="Close modal">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
 
@@ -1640,11 +1640,11 @@
   </div>
 
   <!-- Policy & Legal Modals for Razorpay Compliance -->
-  <div id="policyModal" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
+  <div id="policyModal" onclick="if(event.target === this) closePolicyModal()" class="hidden fixed inset-0 z-50 bg-black/80 blur-glass flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl relative">
       <div class="p-6 border-b border-slate-800 flex items-center justify-between">
         <h3 id="policyModalTitle" class="text-xl font-bold text-white">Policy</h3>
-        <button onclick="closePolicyModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
+        <button type="button" onclick="closePolicyModal()" class="text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition cursor-pointer" aria-label="Close modal">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
@@ -1924,6 +1924,15 @@
 
     function openUnlockModal() {
       openMegaBundleModal();
+    }
+
+    function closeUnlockModal() {
+      const modal = document.getElementById('unlockModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function closeMegaBundleModal() {
+      closeUnlockModal();
     }
 
     async function initiateRazorpayPayment() {
@@ -2250,6 +2259,16 @@
       const modal = document.getElementById('sampleViewerModal');
       if (modal) modal.classList.add('hidden');
     }
+
+    // Global keyboard shortcut to close any modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeUnlockModal();
+        closeClaimFreeModal();
+        closeSampleViewerModal();
+        closePolicyModal();
+      }
+    });
 
     // Initialize Page
     window.addEventListener('DOMContentLoaded', () => {
