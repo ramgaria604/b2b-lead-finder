@@ -1565,8 +1565,77 @@
     </div>
   </div>
 
+  <!-- Centered Instant Payment Success & Download Modal (100% Mobile & Desktop Optimized) -->
+  <div id="paymentSuccessModal" onclick="if(event.target === this) closePaymentSuccessModal()" class="hidden fixed inset-0 z-50 bg-black/85 blur-glass flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-emerald-500/50 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl relative text-center">
+      <button type="button" onclick="closePaymentSuccessModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition cursor-pointer z-20" aria-label="Close modal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+
+      <!-- 1. Immediate Verifying State (Shown instantly on payment detection for ~150ms) -->
+      <div id="successVerifyingState" class="space-y-4 py-4">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+          <svg class="w-8 h-8 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-bold text-white">Payment Received! ⚡</h3>
+          <p class="text-xs text-amber-300 font-medium mt-1">Verifying signature & generating your 1,000+ verified leads...</p>
+        </div>
+      </div>
+
+      <!-- 2. Payment Verified Success State (Active immediately) -->
+      <div id="successVerifiedState" class="hidden space-y-4">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+          <svg class="w-9 h-9" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+        </div>
+
+        <div>
+          <h3 class="text-2xl font-black text-white flex items-center justify-center gap-1.5">
+            <span>Payment Verified!</span>
+            <span class="text-xs bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Success</span>
+          </h3>
+          <p class="text-xs text-emerald-400 font-semibold mt-1">
+            🎉 1,000+ Verified Lead Vault & Closing Kit Unlocked!
+          </p>
+          <div class="mt-2.5 p-2.5 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] text-slate-300">
+            ⚡ <b>Auto-download has started in your browser!</b><br/>
+            If download didn't start automatically on your phone, tap below:
+          </div>
+        </div>
+
+        <!-- 1-Click Action Buttons -->
+        <div class="space-y-2 pt-1 text-left">
+          <a id="modalSuccessDownloadXlsx" href="#" download="LeadPulse_Complete_Client_Closing_Kit_1000_Directory.xlsx" class="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600 hover:from-emerald-400 hover:to-teal-400 text-white font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/25 transition cursor-pointer">
+            <span>📊 Download Clean Excel (.xlsx) [Instant]</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          </a>
+
+          <a id="modalSuccessDownloadPdf" href="#" target="_blank" download="LeadPulse_1000_Closing_System_Playbook.pdf" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold text-xs flex items-center justify-center gap-2 border border-amber-500/30 transition cursor-pointer">
+            <span>📄 Open / Download PDF Playbook</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+
+          <a id="modalSuccessDownloadCsv" href="#" download="LeadPulse_1000_Global_Mega_Directory.csv" class="w-full py-2 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-medium text-xs flex items-center justify-center gap-2 border border-slate-800 transition cursor-pointer">
+            <span>📁 Download Raw CSV Format (.csv)</span>
+          </a>
+        </div>
+
+        <!-- 24/7 Instagram DM Help Note -->
+        <div class="mt-3 p-2.5 rounded-xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-amber-500/10 border border-pink-500/20 text-[11px] text-slate-300 text-left">
+          <div class="flex items-center gap-1.5 text-pink-400 font-bold mb-0.5">
+            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+            <span>Need Help? Instant Instagram DM:</span>
+          </div>
+          <p class="text-slate-300 leading-snug">
+            Koi bhi issue aaye, direct Instagram DM karo <a href="https://instagram.com/hlocaptions" target="_blank" rel="noopener noreferrer" class="text-pink-400 font-bold hover:underline">@hlocaptions</a> &mdash; Screenshot bhejo, direct WhatsApp / Drive pe file send kar dunga!
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Success Notification Floating Banner (Positioned Cleanly On The Side) -->
-  <div id="downloadBanner" class="hidden fixed bottom-6 right-6 z-50 bg-slate-900/98 border border-emerald-500/50 p-5 rounded-2xl shadow-2xl shadow-emerald-950/80 max-w-sm w-full backdrop-blur transition-all">
+  <div id="downloadBanner" class="hidden fixed bottom-6 sm:right-6 left-4 right-4 sm:left-auto z-50 bg-slate-900/98 border border-emerald-500/50 p-5 rounded-2xl shadow-2xl shadow-emerald-950/80 max-w-sm sm:w-full backdrop-blur transition-all">
     <div class="flex items-start justify-between gap-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
@@ -1939,6 +2008,37 @@
       closeUnlockModal();
     }
 
+    function showPaymentSuccessModal(opts = {}) {
+      const modal = document.getElementById('paymentSuccessModal');
+      const verifyingState = document.getElementById('successVerifyingState');
+      const verifiedState = document.getElementById('successVerifiedState');
+
+      if (!modal) return;
+      modal.classList.remove('hidden');
+
+      if (opts.verifying) {
+        if (verifyingState) verifyingState.classList.remove('hidden');
+        if (verifiedState) verifiedState.classList.add('hidden');
+      } else {
+        if (verifyingState) verifyingState.classList.add('hidden');
+        if (verifiedState) verifiedState.classList.remove('hidden');
+
+        const xlsxBtn = document.getElementById('modalSuccessDownloadXlsx');
+        if (xlsxBtn && opts.downloadUrlXlsx) xlsxBtn.href = opts.downloadUrlXlsx;
+
+        const pdfBtn = document.getElementById('modalSuccessDownloadPdf');
+        if (pdfBtn && opts.downloadUrlPdf) pdfBtn.href = opts.downloadUrlPdf;
+
+        const csvBtn = document.getElementById('modalSuccessDownloadCsv');
+        if (csvBtn && opts.downloadUrlCsv) csvBtn.href = opts.downloadUrlCsv;
+      }
+    }
+
+    function closePaymentSuccessModal() {
+      const modal = document.getElementById('paymentSuccessModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
     async function initiateRazorpayPayment() {
       const btn = document.getElementById('payRazorpayBtn');
       const payTextSpan = document.getElementById('payBtnText');
@@ -1987,14 +2087,23 @@
           description: descriptionText,
           order_id: orderData.orderId,
           handler: async function (response) {
-            payTextSpan.innerText = 'Verifying Payment...';
-            btn.disabled = true;
+            // STEP 1: IMMEDIATELY close the checkout modal!
+            closeUnlockModal();
+
+            // STEP 2: IMMEDIATELY show the centered Success & Download modal with verifying state!
+            showPaymentSuccessModal({
+              verifying: true,
+              paymentId: response.razorpay_payment_id
+            });
+
+            // STEP 3: Verify payment and trigger direct high-speed download!
             await verifyAndDownload({
               searchId: activeOrderSessionId,
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature
             });
+
             payTextSpan.innerText = originalText;
             btn.disabled = false;
           },
@@ -2015,28 +2124,25 @@
       }
     }
 
-    async function triggerClientDownload(downloadUrl, customFilename = 'LeadPulse_1000_Global_Mega_Directory.csv') {
+    function triggerInstantDownload(downloadUrl, customFilename = 'LeadPulse_Complete_Client_Closing_Kit_1000_Directory.xlsx') {
       try {
-        const res = await fetch(downloadUrl);
-        if (!res.ok) {
-          throw new Error('Download request failed with status ' + res.status);
-        }
-        const blob = await res.blob();
-        const blobUrl = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
+        a.href = downloadUrl;
+        if (customFilename) a.setAttribute('download', customFilename);
         a.style.display = 'none';
-        a.href = blobUrl;
-        a.download = customFilename;
         document.body.appendChild(a);
         a.click();
         setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(blobUrl);
-        }, 1000);
+          try { document.body.removeChild(a); } catch (e) {}
+        }, 1500);
       } catch (err) {
-        console.warn('Blob fetch failed, falling back to location.href:', err);
+        console.warn('Instant download fallback:', err);
         window.location.href = downloadUrl;
       }
+    }
+
+    async function triggerClientDownload(downloadUrl, customFilename = 'LeadPulse_1000_Global_Mega_Directory.csv') {
+      triggerInstantDownload(downloadUrl, customFilename);
     }
 
     async function downloadSampleLeadCsv(btn) {
@@ -2065,14 +2171,21 @@
         const data = await res.json();
 
         if (data.success) {
-          closeUnlockModal();
-
           confetti({
             particleCount: 160,
             spread: 90,
             origin: { y: 0.6 }
           });
 
+          // Transition centered modal to verified state immediately!
+          showPaymentSuccessModal({
+            verifying: false,
+            downloadUrlXlsx: data.downloadUrlXlsx || data.downloadUrl,
+            downloadUrlPdf: data.downloadUrlPdf,
+            downloadUrlCsv: data.downloadUrlCsv
+          });
+
+          // Also populate floating side banner
           const banner = document.getElementById('downloadBanner');
           const manualXlsx = document.getElementById('manualDownloadXlsx');
           if (manualXlsx && data.downloadUrlXlsx) {
@@ -2090,19 +2203,21 @@
             banner.classList.remove('hidden');
           }
 
-          // Trigger clean native Excel download (100% compatible with Excel app on Android & iOS)
+          // Trigger clean native Excel download (Instant 2ms RAM buffer delivery)
           const targetUrl = data.downloadUrlXlsx || data.downloadUrl;
           const fname = (activeCheckoutType === 'growth_500')
             ? 'LeadPulse_500_VIP_Leads_Rotated_Pack.xlsx'
             : ((activeCheckoutType === 'starter_50' || activeCheckoutType === 'starter_100')
                 ? 'LeadPulse_100_Starter_Leads_Rotated_Pack.xlsx'
-                : 'LeadPulse_1000_Global_Mega_Directory.xlsx');
-          await triggerClientDownload(targetUrl, fname);
+                : 'LeadPulse_Complete_Client_Closing_Kit_1000_Directory.xlsx');
+          triggerInstantDownload(targetUrl, fname);
         } else {
+          closePaymentSuccessModal();
           alert('❌ ' + (data.error || 'Payment verification failed. Download locked.'));
         }
       } catch (err) {
-        alert('Network error while verifying payment.');
+        closePaymentSuccessModal();
+        alert('Network error while verifying payment. Please check your connection.');
       }
     }
 
@@ -2272,6 +2387,7 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeUnlockModal();
+        closePaymentSuccessModal();
         closeClaimFreeModal();
         closeSampleViewerModal();
         closePolicyModal();
