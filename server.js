@@ -570,7 +570,7 @@ app.get('/api/bundle-info', (req, res) => {
 
 // 1.8. Validate Coupon Endpoint (Client Verification)
 app.post('/api/validate-coupon', (req, res) => {
-  const { code } = req.body;
+  const { code } = req.body || {};
   const originalPriceINR = 199;
   const result = validateCoupon(code, originalPriceINR, 'mega_1000');
   if (!result || !result.valid) {
@@ -589,7 +589,7 @@ app.post('/api/validate-coupon', (req, res) => {
 
 // 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹149 & 1,000+ Mega Bundle ₹249)
 app.post('/api/create-order', async (req, res) => {
-  const { couponCode } = req.body;
+  const { couponCode } = req.body || {};
   const baseAmountINR = 199;
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
