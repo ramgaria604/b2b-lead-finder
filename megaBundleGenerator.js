@@ -122,11 +122,11 @@ const LOCATIONS = [
     flag: '🇦🇪',
     streets: ['Downtown Boulevard', 'Sheikh Zayed Road', 'Dubai Marina Walk', 'Business Bay Avenue', 'DIFC Gate Precinct', 'Al Khaleej Al Tejari St', 'Palm Jumeirah Boardwalk'],
     phoneGen: (i) => {
-      const prefixes = ['0', '2', '4', '5', '6', '8'];
+      const prefixes = ['50', '52', '54', '55', '56', '58'];
       const p = prefixes[i % prefixes.length];
       const mid = 100 + ((i * 47) % 899);
       const end = 1000 + ((i * 139) % 8999);
-      return `+971 5${p} ${mid} ${end}`;
+      return `+971 ${p} ${mid} ${end}`;
     }
   },
   {
@@ -136,9 +136,11 @@ const LOCATIONS = [
     flag: '🇦🇪',
     streets: ['Corniche Road', 'Al Reem Island Towers', 'Yas Island Commercial Hub', 'Saadiyat Cultural District'],
     phoneGen: (i) => {
-      const mid = 200 + ((i * 31) % 799);
+      const prefixes = ['50', '52', '54', '55', '56', '58'];
+      const p = prefixes[(i + 3) % prefixes.length];
+      const mid = 100 + ((i * 31) % 899);
       const end = 1000 + ((i * 97) % 8999);
-      return `+971 2 ${mid} ${end}`;
+      return `+971 ${p} ${mid} ${end}`;
     }
   },
   {
@@ -160,9 +162,11 @@ const LOCATIONS = [
     flag: '🇺🇸',
     streets: ['5th Avenue', 'Madison Avenue', 'Park Avenue', 'Broadway', 'Wall Street', 'Lexington Avenue', 'Hudson Yards'],
     phoneGen: (i) => {
+      const areaCodes = ['212', '917', '646', '332'];
+      const ac = areaCodes[i % areaCodes.length];
       const mid = 200 + ((i * 53) % 799);
       const end = 1000 + ((i * 179) % 8999);
-      return `+1 (212) ${mid}-${end}`;
+      return `+1 (${ac}) ${mid}-${end}`;
     }
   },
   {
@@ -172,9 +176,11 @@ const LOCATIONS = [
     flag: '🇺🇸',
     streets: ['Wilshire Boulevard', 'Rodeo Drive', 'Santa Monica Blvd', 'Sunset Boulevard', 'Century Park East'],
     phoneGen: (i) => {
+      const areaCodes = ['310', '213', '424', '323'];
+      const ac = areaCodes[i % areaCodes.length];
       const mid = 200 + ((i * 37) % 799);
       const end = 1000 + ((i * 89) % 8999);
-      return `+1 (310) ${mid}-${end}`;
+      return `+1 (${ac}) ${mid}-${end}`;
     }
   },
   {
@@ -184,9 +190,11 @@ const LOCATIONS = [
     flag: '🇨🇦',
     streets: ['Bay Street', 'King Street West', 'Yonge Street', 'University Avenue', 'Queen Street West', 'Bloor Street'],
     phoneGen: (i) => {
+      const areaCodes = ['416', '647', '437'];
+      const ac = areaCodes[i % areaCodes.length];
       const mid = 200 + ((i * 41) % 799);
       const end = 1000 + ((i * 101) % 8999);
-      return `+1 (416) ${mid}-${end}`;
+      return `+1 (${ac}) ${mid}-${end}`;
     }
   },
   {
@@ -196,9 +204,11 @@ const LOCATIONS = [
     flag: '🇨🇦',
     streets: ['Robson Street', 'Burrard Street', 'Georgia Street', 'Granville Street', 'Pacific Boulevard'],
     phoneGen: (i) => {
+      const areaCodes = ['604', '778', '236'];
+      const ac = areaCodes[i % areaCodes.length];
       const mid = 200 + ((i * 43) % 799);
       const end = 1000 + ((i * 103) % 8999);
-      return `+1 (604) ${mid}-${end}`;
+      return `+1 (${ac}) ${mid}-${end}`;
     }
   },
   {
@@ -208,9 +218,15 @@ const LOCATIONS = [
     flag: '🇬🇧',
     streets: ['Canary Wharf', 'Bishopsgate', 'Regent Street', 'Mayfair Square', 'Piccadilly', 'Fleet Street', 'Oxford Street'],
     phoneGen: (i) => {
-      const mid = 7000 + ((i * 19) % 2999);
-      const end = 1000 + ((i * 67) % 8999);
-      return `+44 20 ${mid} ${end}`;
+      if (i % 2 === 0) {
+        const mid = 7000 + ((i * 19) % 2999);
+        const end = 1000 + ((i * 67) % 8999);
+        return `+44 20 ${mid} ${end}`;
+      } else {
+        const mid = 7100 + ((i * 23) % 899);
+        const end = 100000 + ((i * 137) % 899999);
+        return `+44 ${mid} ${end}`;
+      }
     }
   },
   {
@@ -246,9 +262,11 @@ const LOCATIONS = [
     flag: '🇮🇳',
     streets: ['Bandra Kurla Complex (BKC)', 'Linking Road Bandra', 'Nariman Point', 'Andheri East Commercial Hub', 'Powai Central'],
     phoneGen: (i) => {
-      const prefix = 10 + ((i * 13) % 89);
-      const mid = 10000 + ((i * 359) % 89999);
-      return `+91 98${prefix} ${mid}`;
+      const prefixes = ['98', '99', '97', '96', '88', '70', '91'];
+      const pr = prefixes[i % prefixes.length];
+      const p1 = 100 + ((i * 37) % 899);
+      const p2 = 10000 + ((i * 359) % 89999);
+      return `+91 ${pr}${p1} ${p2}`;
     }
   },
   {
@@ -258,9 +276,11 @@ const LOCATIONS = [
     flag: '🇮🇳',
     streets: ['Golf Course Road Gurgaon', 'Cyber City Gurgaon', 'Barakhamba Road Connaught Place', 'South Extension', 'Aerocity Hospitality District'],
     phoneGen: (i) => {
-      const prefix = 10 + ((i * 17) % 89);
-      const mid = 10000 + ((i * 373) % 89999);
-      return `+91 99${prefix} ${mid}`;
+      const prefixes = ['99', '98', '97', '96', '88', '70', '95'];
+      const pr = prefixes[i % prefixes.length];
+      const p1 = 100 + ((i * 41) % 899);
+      const p2 = 10000 + ((i * 373) % 89999);
+      return `+91 ${pr}${p1} ${p2}`;
     }
   }
 ];
@@ -277,7 +297,7 @@ function generateMegaBundleLeads() {
 
   for (const cat of CATEGORIES) {
     for (let i = 0; i < cat.count; i++) {
-      const loc = LOCATIONS[(i + leadIndex) % LOCATIONS.length];
+      const loc = LOCATIONS[(leadIndex - 1) % LOCATIONS.length];
       const prefix = cat.prefixes[(i) % cat.prefixes.length];
       const suffix = cat.suffixes[(i * 3 + leadIndex) % cat.suffixes.length];
       const street = loc.streets[(i * 2 + leadIndex) % loc.streets.length];
@@ -286,7 +306,7 @@ function generateMegaBundleLeads() {
       const name = `${prefix} ${suffix}`;
       const slug = name.toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 15);
       
-      const domainTld = loc.code === 'AE' ? 'ae' : (loc.code === 'GB' ? 'co.uk' : (loc.code === 'CA' ? 'ca' : (loc.code === 'AU' ? 'com.au' : 'com')));
+      const domainTld = loc.code === 'AE' ? 'ae' : (loc.code === 'GB' ? 'co.uk' : (loc.code === 'CA' ? 'ca' : (loc.code === 'AU' ? 'com.au' : (loc.code === 'IN' ? 'in' : 'com'))));
       const emailUsers = ['contact', 'office', 'advisors', 'info', 'partner', 'direct', 'hello', 'team'];
       const emailUser = emailUsers[(i + leadIndex) % emailUsers.length];
       const email = `${emailUser}@${slug}.${domainTld}`;
@@ -299,7 +319,7 @@ function generateMegaBundleLeads() {
         id: `LP-MEGA-${String(leadIndex).padStart(4, '0')}`,
         name,
         category: cat.name,
-        phone: loc.phoneGen(i + leadIndex),
+        phone: loc.phoneGen(leadIndex),
         email,
         website,
         address: `Suite ${suiteNum}, ${street}`,
