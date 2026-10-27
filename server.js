@@ -509,8 +509,9 @@ app.get('/api/bundle-info', (req, res) => {
 app.post('/api/validate-coupon', (req, res) => {
   const { code, bundleType } = req.body;
   const isMega = bundleType === 'mega_4000';
-  const isStarter = bundleType === 'starter_50';
-  const originalPriceINR = isMega ? 249 : (isStarter ? 20 : 149);
+  const isGrowth500 = bundleType === 'growth_500';
+  const isStarter = bundleType === 'starter_50' || bundleType === 'starter_100';
+  const originalPriceINR = isMega ? 249 : (isGrowth500 ? 100 : (isStarter ? 20 : 149));
 
   const result = validateCoupon(code, originalPriceINR);
   if (!result || !result.valid) {
@@ -531,10 +532,11 @@ app.post('/api/validate-coupon', (req, res) => {
 app.post('/api/create-order', async (req, res) => {
   const { searchId, bundleType, couponCode } = req.body;
   const isMegaBundle = bundleType === 'mega_4000';
-  const isStarterPack = bundleType === 'starter_50';
+  const isGrowth500 = bundleType === 'growth_500';
+  const isStarterPack = bundleType === 'starter_50' || bundleType === 'starter_100';
 
   let activeSessionId = searchId;
-  let baseAmountINR = isMegaBundle ? 249 : (isStarterPack ? 20 : 149);
+  let baseAmountINR = isMegaBundle ? 249 : (isGrowth500 ? 100 : (isStarterPack ? 20 : 149));
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 
@@ -550,11 +552,27 @@ app.post('/api/create-order', async (req, res) => {
   let amountInPaise = Math.round(finalAmountINR * 100);
   let orderDescription = isMegaBundle
     ? `LeadPulse 4,000+ Mega Vault (₹${finalAmountINR})`
-    : (isStarterPack 
-        ? `LeadPulse 100 Starter Leads (₹${finalAmountINR})` 
-        : `LeadPulse B2B Leads Export (₹${finalAmountINR})`);
+    : (isGrowth500
+        ? `LeadPulse 500 VIP Leads (₹${finalAmountINR})`
+        : (isStarterPack 
+            ? `LeadPulse 100 Starter Leads (₹${finalAmountINR})` 
+            : `LeadPulse B2B Leads Export (₹${finalAmountINR})`));
 
-  if (isStarterPack) {
+  if (isGrowth500) {
+    activeSessionId = `growth_500_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    const growthLeads = getNextStarterLeads(500);
+    searchCache.set(activeSessionId, {
+      isBundle: true,
+      bundleType: 'growth_500',
+      query: '500 Verified High-Ticket Decision Makers',
+      city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+      country: 'Global',
+      totalCount: growthLeads.length,
+      leads: growthLeads,
+      appliedCoupon: appliedCouponCode,
+      createdAt: Date.now()
+    });
+  } else if (isStarterPack) {
     activeSessionId = `starter_50_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
     const starterLeads = getNextStarterLeads(100);
     searchCache.set(activeSessionId, {
@@ -704,7 +722,22 @@ app.get('/api/download-csv', (req, res) => {
         createdAt: Date.now()
       };
       searchCache.set(searchId, searchData);
-    } else if (searchId.startsWith('starter_50_')) {
+    } else if (searchId.startsWith('growth_500_')) {
+      const growthLeads = getNextStarterLeads(500);
+      searchData = {
+        isBundle: true,
+        bundleType: 'growth_500',
+        query: '500 Verified High-Ticket Decision Makers',
+        city: 'Global (UAE, USA, Canada, UK, Australia, India)',
+        country: 'Global',
+        totalCount: growthLeads.length,
+        leads: growthLeads,
+        unlocked: true,
+        downloadToken: token,
+        createdAt: Date.now()
+      };
+      searchCache.set(searchId, searchData);
+    } else if (searchId.startsWith('starter_50_') || searchId.startsWith('starter_100_')) {
       const starterLeads = getNextStarterLeads(100);
       searchData = {
         isBundle: true,
@@ -726,7 +759,9 @@ app.get('/api/download-csv', (req, res) => {
     return res.status(403).send('Unauthorized or invalid download token. Please complete payment first.');
   }
 
-  const baseFilename = searchData.bundleType === 'starter_50'
+  const baseFilename = searchData.bundleType === 'growth_500'
+    ? 'LeadPulse_500_VIP_Leads_Rotated_Pack'
+    : (searchData.bundleType === 'starter_50' || searchData.bundleType === 'starter_100')
     ? 'LeadPulse_100_Starter_Leads_Rotated_Pack'
     : (searchData.isBundle
         ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records`
