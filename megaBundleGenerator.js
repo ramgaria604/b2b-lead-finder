@@ -1,10 +1,10 @@
-// LeadPulse AI - 4,000+ Multi-Category Global B2B Mega Vault Generator
+// LeadPulse AI - 1,000+ Multi-Category Global B2B Mega Vault Generator
 // Covers Real Estate, Immigration, Solar, MedSpas, Logistics & Tech Agencies across UAE, USA, Canada, UK, Australia & India.
 
 const CATEGORIES = [
   {
     name: 'Real Estate Agents & Luxury Brokers',
-    count: 1250,
+    count: 300,
     prefixes: [
       "Sotheby's International Realty", "Christie's International Real Estate", "Compass Luxury Group",
       "Engel & Völkers Prime", "Berkshire Hathaway HomeServices", "Coldwell Banker Global Luxury",
@@ -26,7 +26,7 @@ const CATEGORIES = [
   },
   {
     name: 'Immigration Lawyers & Relocation Consultants',
-    count: 850,
+    count: 200,
     prefixes: [
       'Apex Global Immigration', 'Vanguard Visa Chambers', 'Fragomen Mobility Legal',
       'CanAm Relocation Services', 'Beacon Immigration Law', 'Sterling Legal Partners',
@@ -46,7 +46,7 @@ const CATEGORIES = [
   },
   {
     name: 'Solar Energy & Commercial Roofing',
-    count: 650,
+    count: 150,
     prefixes: [
       'SunPower Commercial Systems', 'Apex Solar Systems', 'Horizon Clean Energy',
       'Titan Solar & Roofing', 'Vanguard Renewable Energy', 'Freedom Solar Power',
@@ -64,7 +64,7 @@ const CATEGORIES = [
   },
   {
     name: 'MedSpas, Aesthetic Clinics & Botox Centers',
-    count: 550,
+    count: 150,
     prefixes: [
       'Luxe Aesthetics Clinic', 'Radiance MedSpa & Wellness', 'Aura Medical Aesthetics',
       'Elite Laser & Botox Studio', 'Glow Wellness Sanctuary', 'Beverly Hills Aesthetics',
@@ -81,7 +81,7 @@ const CATEGORIES = [
   },
   {
     name: 'Freight Forwarding, Cargo & 3PL Logistics',
-    count: 500,
+    count: 100,
     prefixes: [
       'Apex Global Freight', 'TransWorld 3PL Solutions', 'Swift Cargo Network',
       'Vanguard International Shipping', 'Oceanic Freight Forwarders', 'Pacific Global Logistics',
@@ -98,7 +98,7 @@ const CATEGORIES = [
   },
   {
     name: 'Tech, Web Design, AI & Marketing Agencies',
-    count: 450,
+    count: 100,
     prefixes: [
       'Nexar Digital Solutions', 'Apex Media Labs', 'ScaleUp Tech Studio',
       'Vanguard Creative Agency', 'Horizon B2B Growth Partners', 'Hyperion Web & AI',
@@ -288,7 +288,7 @@ const LOCATIONS = [
 let cachedMegaBundle = null;
 
 function generateMegaBundleLeads() {
-  if (cachedMegaBundle && cachedMegaBundle.length >= 4200) {
+  if (cachedMegaBundle && cachedMegaBundle.length >= 1000) {
     return cachedMegaBundle;
   }
 
@@ -329,7 +329,7 @@ function generateMegaBundleLeads() {
         rating: parseFloat(rating),
         reviewsCount,
         verified: true,
-        dataSource: 'LeadPulse 4,000+ Global Mega Directory'
+        dataSource: 'LeadPulse 1,000+ Global Mega Directory'
       });
 
       leadIndex++;
@@ -359,12 +359,12 @@ function getMegaBundleStats() {
     price: 199,
     priceFormatted: '₹199',
     breakdown: [
-      { category: 'Real Estate Agents & Luxury Brokers', count: '1,250+', icon: '🏢', locations: 'Dubai, Miami, NY, Toronto, Sydney, London' },
-      { category: 'Immigration Lawyers & Relocation Consultants', count: '850+', icon: '🛂', locations: 'Canada, Australia, UAE, UK, USA' },
-      { category: 'Solar Energy & Commercial Roofing', count: '650+', icon: '☀️', locations: 'California, Texas, Florida, Australia' },
-      { category: 'MedSpas, Aesthetic Clinics & Botox Centers', count: '550+', icon: '💉', locations: 'Dubai, Beverly Hills, London, Delhi' },
-      { category: 'Freight Forwarding & 3PL Logistics', count: '500+', icon: '🚢', locations: 'Dubai, New York, Chicago, Mumbai' },
-      { category: 'Tech, Web Design & Marketing Agencies', count: '450+', icon: '💻', locations: 'Global Tech Hubs' }
+      { category: 'Real Estate Agents & Luxury Brokers', count: '300+', icon: '🏢', locations: 'Dubai, Miami, NY, Toronto, Sydney, London' },
+      { category: 'Immigration Lawyers & Relocation Consultants', count: '200+', icon: '🛂', locations: 'Canada, Australia, UAE, UK, USA' },
+      { category: 'Solar Energy & Commercial Roofing', count: '150+', icon: '☀️', locations: 'California, Texas, Florida, Australia' },
+      { category: 'MedSpas, Aesthetic Clinics & Botox Centers', count: '150+', icon: '💉', locations: 'Dubai, Beverly Hills, London, Delhi' },
+      { category: 'Freight Forwarding & 3PL Logistics', count: '100+', icon: '🚢', locations: 'Dubai, New York, Chicago, Mumbai' },
+      { category: 'Tech, Web Design & Marketing Agencies', count: '100+', icon: '💻', locations: 'Global Tech Hubs' }
     ]
   };
 }

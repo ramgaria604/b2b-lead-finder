@@ -486,7 +486,7 @@ function saveCoupons(coupons) {
   }
 }
 
-function validateCoupon(rawCode, originalAmountINR, bundleType = 'mega_4000') {
+function validateCoupon(rawCode, originalAmountINR, bundleType = 'mega_1000') {
   if (!rawCode) return null;
   const inputCode = String(rawCode).trim().toUpperCase();
   const normalizedCode = inputCode.replace(/\s+/g, '');
@@ -553,7 +553,7 @@ function burnCoupon(rawCode, paymentId) {
   }
 }
 
-// 1.5. Special Limited 4,000+ Multi-Category Mega Bundle Info Endpoint
+// 1.5. Special Limited 1,000+ Multi-Category Mega Bundle Info Endpoint
 app.get('/api/bundle-info', (req, res) => {
   try {
     const stats = getMegaBundleStats();
@@ -572,7 +572,7 @@ app.get('/api/bundle-info', (req, res) => {
 app.post('/api/validate-coupon', (req, res) => {
   const { code } = req.body;
   const originalPriceINR = 199;
-  const result = validateCoupon(code, originalPriceINR, 'mega_4000');
+  const result = validateCoupon(code, originalPriceINR, 'mega_1000');
   if (!result || !result.valid) {
     return res.status(400).json({ success: false, error: result ? result.error : 'Invalid coupon code.' });
   }
@@ -587,7 +587,7 @@ app.post('/api/validate-coupon', (req, res) => {
   });
 });
 
-// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹149 & 4,000+ Mega Bundle ₹249)
+// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹149 & 1,000+ Mega Bundle ₹249)
 app.post('/api/create-order', async (req, res) => {
   const { couponCode } = req.body;
   const baseAmountINR = 199;
@@ -595,7 +595,7 @@ app.post('/api/create-order', async (req, res) => {
   let appliedCouponCode = null;
 
   if (couponCode) {
-    const val = validateCoupon(couponCode, baseAmountINR, 'mega_4000');
+    const val = validateCoupon(couponCode, baseAmountINR, 'mega_1000');
     if (!val || !val.valid) {
       return res.status(400).json({ error: val ? val.error : 'Invalid or expired coupon code.' });
     }
@@ -603,12 +603,12 @@ app.post('/api/create-order', async (req, res) => {
     appliedCouponCode = val.code;
   }
 
-  const activeSessionId = `mega_4000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+  const activeSessionId = `mega_1000_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
   const megaLeads = generateMegaBundleLeads();
   searchCache.set(activeSessionId, {
     isBundle: true,
-    bundleType: 'mega_4000',
-    query: 'Complete Client Closing Kit & 4,000+ Lead Vault',
+    bundleType: 'mega_1000',
+    query: 'Complete Client Closing Kit & 1,000+ Lead Vault',
     city: 'Global (UAE, USA, Canada, UK, Australia, India)',
     country: 'Global',
     totalCount: megaLeads.length,
@@ -717,12 +717,12 @@ app.get('/api/download-csv', (req, res) => {
 
   // Failsafe auto-recovery for mega bundle or starter pack in case of server restart
   if (!searchData && searchId) {
-    if (searchId.startsWith('mega_4000_')) {
+    if (searchId.startsWith('mega_1000_')) {
       const megaLeads = generateMegaBundleLeads();
       searchData = {
         isBundle: true,
-        bundleType: 'mega_4000',
-        query: '4,000+ Global High-Ticket B2B Mega Vault',
+        bundleType: 'mega_1000',
+        query: '1,000+ Global High-Ticket B2B Mega Vault',
         city: 'Global (UAE, USA, Canada, UK, Australia, India)',
         country: 'Global',
         totalCount: megaLeads.length,
@@ -774,7 +774,7 @@ app.get('/api/download-csv', (req, res) => {
     : (searchData.bundleType === 'starter_50' || searchData.bundleType === 'starter_100')
     ? 'LeadPulse_100_Starter_Leads_Rotated_Pack'
     : (searchData.isBundle
-        ? `LeadPulse_Complete_Client_Closing_Kit_4000_Directory`
+        ? `LeadPulse_Complete_Client_Closing_Kit_1000_Directory`
         : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory`);
 
   // --- Real Native Excel (.xlsx) Format (Optional for PC Users) ---
@@ -806,12 +806,12 @@ app.get('/api/download-csv', (req, res) => {
     res.status(200).send(pdfBuffer);
   });
 
-  const isMegaSystem = searchData.bundleType === 'mega_4000';
+  const isMegaSystem = searchData.bundleType === 'mega_1000';
 
   if (isMegaSystem) {
     // --- COVER / MASTER SYSTEM HEADER ---
     doc.fontSize(22).fillColor('#0F172A').text('LeadPulse AI — Complete Client Closing System', { align: 'center' });
-    doc.fontSize(11).fillColor('#D97706').text('The Complete Freelancer Acquisition Playbook & 4,000+ Master Directory', { align: 'center' });
+    doc.fontSize(11).fillColor('#D97706').text('The Complete Freelancer Acquisition Playbook & 1,000+ Master Directory', { align: 'center' });
     doc.moveDown(1.5);
 
     // --- MODULE 1: THE STEP-BY-STEP "HOW TO CLOSE" PLAYBOOK ---
@@ -926,7 +926,7 @@ app.get('/api/download-csv', (req, res) => {
   const bom = Buffer.from([0xEF, 0xBB, 0xBF]);
   const csvBuffer = Buffer.concat([bom, Buffer.from([headerLine, ...dataLines].join('\r\n'), 'utf-8')]);
   const filename = searchData.isBundle
-    ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records.csv`
+    ? `LeadPulse_1000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records.csv`
     : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory.csv`;
 
   res.setHeader('Content-Type', 'text/csv; charset=utf-8');
