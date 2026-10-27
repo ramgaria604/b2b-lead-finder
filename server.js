@@ -591,6 +591,7 @@ app.post('/api/validate-coupon', (req, res) => {
 app.post('/api/create-order', async (req, res) => {
   const { couponCode } = req.body || {};
   const baseAmountINR = 199;
+  const isMegaBundle = true;
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 
