@@ -732,7 +732,7 @@ app.get('/api/download-csv', (req, res) => {
         ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records`
         : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory`);
 
-  // --- Real Native Excel (.xlsx) Format ---
+  // --- Real Native Excel (.xlsx) Format (Optional for PC Users) ---
   if (format === 'xlsx') {
     const wb = XLSX.utils.book_new();
     const wsData = [
@@ -749,35 +749,34 @@ app.get('/api/download-csv', (req, res) => {
     return res.status(200).send(xlsxBuffer);
   }
 
-  // --- Official Executive PDF Report Format ---
-  if (format === 'pdf') {
-    const doc = new PDFDocument({ margin: 36, size: 'A4' });
-    const chunks = [];
-    doc.on('data', c => chunks.push(c));
-    doc.on('end', () => {
-      const pdfBuffer = Buffer.concat(chunks);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `attachment; filename="${baseFilename}.pdf"`);
-      res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
-      res.status(200).send(pdfBuffer);
-    });
+  // --- Official Executive PDF Report Format (DEFAULT: 100% Guaranteed Open on Every Phone & PC) ---
+  // PDF format is delivered by default to prevent mobile CSV opening errors
+  const doc = new PDFDocument({ margin: 36, size: 'A4' });
+  const chunks = [];
+  doc.on('data', c => chunks.push(c));
+  doc.on('end', () => {
+    const pdfBuffer = Buffer.concat(chunks);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `inline; filename="${baseFilename}.pdf"`);
+    res.setHeader('Cache-Control', 'no-cache, no-store, no-transform, must-revalidate');
+    res.status(200).send(pdfBuffer);
+  });
 
-    doc.fontSize(18).fillColor('#0F172A').text('LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
-    doc.fontSize(10).fillColor('#64748B').text(`${searchData.leads.length} Verified Records - ${searchData.query}`, { align: 'center' });
-    doc.moveDown(1.5);
+  doc.fontSize(18).fillColor('#0F172A').text('LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
+  doc.fontSize(10).fillColor('#64748B').text(`${searchData.leads.length} Verified Records - ${searchData.query}`, { align: 'center' });
+  doc.moveDown(1.5);
 
-    searchData.leads.forEach((lead, i) => {
-      doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
-      doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ★ ${lead.rating} (${lead.reviewsCount} reviews)`);
-      doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
-      doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
-      doc.fontSize(9).fillColor('#059669').text(`   Website: ${lead.website}`);
-      doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
-      doc.moveDown(0.8);
-    });
+  searchData.leads.forEach((lead, i) => {
+    doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
+    doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ${lead.rating}/5.0 (${lead.reviewsCount} reviews)`);
+    doc.fontSize(9).fillColor('#4338CA').text(`   Direct Phone / WhatsApp: ${lead.phone}`);
+    doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
+    doc.fontSize(9).fillColor('#059669').text(`   Website: ${lead.website}`);
+    doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
+    doc.moveDown(0.8);
+  });
 
-    return doc.end();
-  }
+  return doc.end();
 
   // Professional headers with distinct columns for seamless sorting in Microsoft Excel / Sheets
   const headers = [
