@@ -511,7 +511,7 @@ app.post('/api/validate-coupon', (req, res) => {
   const isMega = bundleType === 'mega_4000';
   const isGrowth500 = bundleType === 'growth_500';
   const isStarter = bundleType === 'starter_50' || bundleType === 'starter_100';
-  const originalPriceINR = isMega ? 249 : (isGrowth500 ? 100 : (isStarter ? 20 : 149));
+  const originalPriceINR = isMega ? 299 : (isGrowth500 ? 100 : (isStarter ? 20 : 149));
 
   const result = validateCoupon(code, originalPriceINR);
   if (!result || !result.valid) {
@@ -536,7 +536,7 @@ app.post('/api/create-order', async (req, res) => {
   const isStarterPack = bundleType === 'starter_50' || bundleType === 'starter_100';
 
   let activeSessionId = searchId;
-  let baseAmountINR = isMegaBundle ? 249 : (isGrowth500 ? 100 : (isStarterPack ? 20 : 149));
+  let baseAmountINR = isMegaBundle ? 299 : (isGrowth500 ? 100 : (isStarterPack ? 20 : 149));
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;
 
@@ -551,7 +551,7 @@ app.post('/api/create-order', async (req, res) => {
 
   let amountInPaise = Math.round(finalAmountINR * 100);
   let orderDescription = isMegaBundle
-    ? `LeadPulse 4,000+ Mega Vault (₹${finalAmountINR})`
+    ? `LeadPulse Complete Client Closing Kit (₹${finalAmountINR})`
     : (isGrowth500
         ? `LeadPulse 500 VIP Leads (₹${finalAmountINR})`
         : (isStarterPack 
@@ -594,7 +594,7 @@ app.post('/api/create-order', async (req, res) => {
     searchCache.set(activeSessionId, {
       isBundle: true,
       bundleType: 'mega_4000',
-      query: '4,000+ Global High-Ticket B2B Mega Vault',
+      query: 'Complete Client Closing Kit & 4,000+ Lead Vault',
       city: 'Global (UAE, USA, Canada, UK, Australia, India)',
       country: 'Global',
       totalCount: megaLeads.length,
@@ -764,7 +764,7 @@ app.get('/api/download-csv', (req, res) => {
     : (searchData.bundleType === 'starter_50' || searchData.bundleType === 'starter_100')
     ? 'LeadPulse_100_Starter_Leads_Rotated_Pack'
     : (searchData.isBundle
-        ? `LeadPulse_4000_Global_Mega_Directory_${searchData.leads.length}_Verified_Records`
+        ? `LeadPulse_Complete_Client_Closing_Kit_4000_Directory`
         : `${searchData.query.replace(/\s+/g, '_')}_${searchData.city.replace(/\s+/g, '_')}_${searchData.leads.length}_Verified_Directory`);
 
   // --- Real Native Excel (.xlsx) Format (Optional for PC Users) ---
@@ -785,7 +785,6 @@ app.get('/api/download-csv', (req, res) => {
   }
 
   // --- Official Executive PDF Report Format (DEFAULT: 100% Guaranteed Open on Every Phone & PC) ---
-  // PDF format is delivered by default to prevent mobile CSV opening errors
   const doc = new PDFDocument({ margin: 36, size: 'A4' });
   const chunks = [];
   doc.on('data', c => chunks.push(c));
@@ -797,7 +796,69 @@ app.get('/api/download-csv', (req, res) => {
     res.status(200).send(pdfBuffer);
   });
 
-  doc.fontSize(18).fillColor('#0F172A').text('LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
+  const isMegaSystem = searchData.bundleType === 'mega_4000';
+
+  if (isMegaSystem) {
+    // --- COVER / MASTER SYSTEM HEADER ---
+    doc.fontSize(22).fillColor('#0F172A').text('LeadPulse AI — Complete Client Closing System', { align: 'center' });
+    doc.fontSize(11).fillColor('#D97706').text('The Complete Freelancer Acquisition Playbook & 4,000+ Master Directory', { align: 'center' });
+    doc.moveDown(1.5);
+
+    // --- MODULE 1: THE STEP-BY-STEP "HOW TO CLOSE" PLAYBOOK ---
+    doc.fontSize(13).fillColor('#0F172A').text('MODULE 1: THE STEP-BY-STEP CLIENT CLOSING PLAYBOOK', { underline: true });
+    doc.moveDown(0.4);
+    doc.fontSize(9.5).fillColor('#334155').text(
+      '1. Target Selection: Filter leads by your specific niche (e.g. Dubai Luxury Real Estate for video editors, US Solar Contractors for web design/funnels). Pick 15-20 decision makers per day.\n' +
+      '2. The "Trojan Horse" Audit Strategy: NEVER send generic "Hi, hire me" messages. Instead, create a 30-second personalized audit, sample reel, or visual redesign based on their public social media or website.\n' +
+      '3. Friction-Free WhatsApp Outreach: Reach out directly on WhatsApp or verified email during their local business hours (10 AM - 4 PM local time).\n' +
+      '4. Soft Close & Retainer Offer: Offer to do the first 1-2 deliverables as a risk-free pilot or offer 50% deposit terms. Aim for a $500 - $1,500/month recurring retainer.'
+    );
+    doc.moveDown(1.2);
+
+    // --- MODULE 2: PLUG-AND-PLAY COLD OUTREACH SCRIPTS ---
+    doc.fontSize(13).fillColor('#0F172A').text('MODULE 2: COPY-PASTE OUTREACH SCRIPTS (35%+ REPLY RATE)', { underline: true });
+    doc.moveDown(0.4);
+    doc.fontSize(10).fillColor('#1E293B').text('SCRIPT A: WhatsApp Pitch for Video Editors / Reel Creators');
+    doc.fontSize(9).fillColor('#4338CA').text(
+      '"Hey [Name], saw your listing/post for [Property/Clinic/Business]. Loved the aesthetics!\n' +
+      'I noticed your Instagram reels could get 3x more buyer inquiries with dynamic pacing and luxury animated captions. I actually edited a quick 20-second sample reel for your brand to show you what I mean: [Loom / Drive Link].\n' +
+      'No strings attached — feel free to post it! If you like the style, I can edit 12 reels like this for you every month for $500. Let me know if you want to test it!"'
+    );
+    doc.moveDown(0.8);
+
+    doc.fontSize(10).fillColor('#1E293B').text('SCRIPT B: Cold Email Pitch for Web & Marketing Agencies');
+    doc.fontSize(9).fillColor('#4338CA').text(
+      '"Subject: Quick suggestion for [Company Name] website/leads\n' +
+      'Hi [Name],\n' +
+      'I was looking through local businesses in [City] and noticed your website takes ~5s to load on mobile and is missing a direct WhatsApp booking widget.\n' +
+      'I put together a 60-second video walkthrough showing 3 tweaks that could boost your booking conversion by 25%: [Link].\n' +
+      'Would you be open to a quick 5-minute chat this Thursday to see if it makes sense to implement this for you? Best, [Your Name]"'
+    );
+    doc.moveDown(0.8);
+
+    doc.fontSize(10).fillColor('#1E293B').text('SCRIPT C: The 48-Hour Polite Follow-Up');
+    doc.fontSize(9).fillColor('#4338CA').text(
+      '"Hey [Name], just bumping this in case it got buried under your messages! Did you get a chance to see the sample video I made for you? Either way, keep up the great work with [Company Name]!"'
+    );
+    doc.moveDown(1.2);
+
+    // --- MODULE 3: CLIENT PROPOSAL & AGREEMENT TEMPLATE ---
+    doc.fontSize(13).fillColor('#0F172A').text('MODULE 3: HIGH-TICKET CLIENT PROPOSAL & AGREEMENT TEMPLATE', { underline: true });
+    doc.moveDown(0.4);
+    doc.fontSize(9).fillColor('#334155').text(
+      '• Scope of Work: 12-16 High-Retention Reels / Month (Scripting, Editing, Subtitles, Revisions).\n' +
+      '• Deliverable Turnaround: 48 hours per video upon raw footage receipt.\n' +
+      '• Investment: $650 USD / Month (Paid via Stripe, Wise, or Direct Bank Wire).\n' +
+      '• Payment Terms: 50% upon agreement signing, 50% upon delivery of month 1 videos.\n' +
+      '• Guarantee: 2 rounds of revisions per asset to guarantee 100% brand satisfaction.'
+    );
+    doc.moveDown(1.5);
+
+    doc.addPage();
+  }
+
+  // --- MODULE 4: VERIFIED DIRECTORY ---
+  doc.fontSize(18).fillColor('#0F172A').text(isMegaSystem ? 'MODULE 4: VERIFIED GLOBAL B2B DECISION MAKERS' : 'LeadPulse AI - Verified B2B Decision Makers', { align: 'center' });
   doc.fontSize(10).fillColor('#64748B').text(`${searchData.leads.length} Verified Records - ${searchData.query}`, { align: 'center' });
   doc.moveDown(1.5);
 
