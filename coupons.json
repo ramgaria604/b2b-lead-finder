@@ -31,6 +31,30 @@
     "createdAt": "2026-10-24T16:00:00.000Z",
     "description": "Nikhil Private Test Pass - Flat ₹1"
   },
+  "SHIVA100": {
+    "code": "SHIVA100",
+    "type": "flat",
+    "discountAmount": 100,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-28T14:18:00.000Z",
+    "description": "Secret Shiva Deal — Flat ₹100 OFF (₹299 -> ₹199, Multi-Use)"
+  },
+  "SHIVA 100": {
+    "code": "SHIVA100",
+    "type": "flat",
+    "discountAmount": 100,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-28T14:18:00.000Z",
+    "description": "Secret Shiva Deal — Flat ₹100 OFF (₹299 -> ₹199, Multi-Use)"
+  },
   "SAVE100": {
     "code": "SAVE100",
     "type": "flat",
