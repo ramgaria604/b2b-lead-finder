@@ -609,7 +609,7 @@ function validateCoupon(rawCode, originalAmountINR, bundleType = 'mega_1000') {
   }
 
   if (coupon.allowedBundleTypes && !coupon.allowedBundleTypes.includes(bundleType)) {
-    return { valid: false, error: 'This coupon code is only valid for the Complete Client Closing Kit (₹199).' };
+    return { valid: false, error: 'This coupon code is only valid for the Complete Client Closing Kit (₹299).' };
   }
 
   if (coupon.minOrderAmount && originalAmountINR < coupon.minOrderAmount) {
@@ -678,7 +678,7 @@ app.get('/api/bundle-info', (req, res) => {
 // 1.8. Validate Coupon Endpoint (Client Verification)
 app.post('/api/validate-coupon', (req, res) => {
   const { code } = req.body || {};
-  const originalPriceINR = 199;
+  const originalPriceINR = 299;
   const result = validateCoupon(code, originalPriceINR, 'mega_1000');
   if (!result || !result.valid) {
     return res.status(400).json({ success: false, error: result ? result.error : 'Invalid coupon code.' });
@@ -694,10 +694,10 @@ app.post('/api/validate-coupon', (req, res) => {
   });
 });
 
-// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹149 & 1,000+ Mega Bundle ₹249)
+// 2. Create Razorpay Payment Order Endpoint (Supports standard search ₹149 & 1,000+ Mega Bundle ₹299)
 app.post('/api/create-order', async (req, res) => {
   const { couponCode } = req.body || {};
-  const baseAmountINR = 199;
+  const baseAmountINR = 299;
   const isMegaBundle = true;
   let finalAmountINR = baseAmountINR;
   let appliedCouponCode = null;

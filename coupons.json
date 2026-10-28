@@ -1,80 +1,94 @@
 {
-  "TEST-NIKHIL-9284X": {
-    "code": "TEST-NIKHIL-9284X",
-    "type": "fixed_price",
-    "finalPriceINR": 1,
-    "maxUses": 25,
-    "timesUsed": 0,
-    "usedBy": [],
-    "createdAt": "2026-10-24T16:00:00.000Z",
-    "description": "Nikhil Live Test Pass - Flat ₹1 (Multi-Use for Testing)"
-  },
-  "EDITOR50": {
-    "code": "EDITOR50",
-    "type": "flat",
-    "discountAmount": 50,
-    "maxUses": 10,
-    "timesUsed": 0,
-    "usedBy": [],
-    "createdAt": "2026-10-26T02:24:00.000Z",
-    "description": "Secret Flat ₹50 Off Deal (₹249 -> ₹199)"
-  },
-  "RONAK100": {
-    "code": "RONAK100",
-    "type": "flat",
-    "discountAmount": 100,
-    "minOrderAmount": 199,
-    "allowedBundleTypes": [
-      "mega_1000",
-      "mega_4000"
-    ],
-    "maxUses": null,
-    "timesUsed": 0,
-    "usedBy": [],
-    "createdAt": "2026-10-27T13:31:17.196Z",
-    "description": "Special Ronak Deal — Flat ₹100 OFF (₹199 -> ₹99)"
-  },
-  "RONAK 100": {
-    "code": "RONAK100",
-    "type": "flat",
-    "discountAmount": 100,
-    "minOrderAmount": 199,
-    "allowedBundleTypes": [
-      "mega_1000",
-      "mega_4000"
-    ],
-    "maxUses": null,
-    "timesUsed": 0,
-    "usedBy": [],
-    "createdAt": "2026-10-27T13:31:17.400Z",
-    "description": "Special Ronak Deal — Flat ₹100 OFF (₹199 -> ₹99)"
-  },
   "NIKHILTEST": {
     "code": "NIKHILTEST",
     "type": "fixed_price",
     "finalPriceINR": 1,
-    "allowedBundleTypes": [
-      "mega_1000",
-      "mega_4000"
-    ],
-    "maxUses": 100,
+    "allowedBundleTypes": ["mega_1000", "mega_4000"],
+    "maxUses": 1000,
     "timesUsed": 0,
     "usedBy": [],
     "createdAt": "2026-10-27T13:45:47.168Z",
-    "description": "Nikhil Live Test Pass — ₹1 Checkout Test"
+    "description": "Nikhil Private Test Pass — ₹1 Checkout Test"
   },
   "NIKHIL TEST": {
     "code": "NIKHILTEST",
     "type": "fixed_price",
     "finalPriceINR": 1,
-    "allowedBundleTypes": [
-      "mega_1000",
-      "mega_4000"
-    ],
-    "maxUses": 100,
+    "allowedBundleTypes": ["mega_1000", "mega_4000"],
+    "maxUses": 1000,
     "timesUsed": 0,
     "usedBy": [],
     "createdAt": "2026-10-27T13:45:47.170Z",
-    "description": "Nikhil Live Test Pass — ₹1 Checkout Test"
+    "description": "Nikhil Private Test Pass — ₹1 Checkout Test"
+  },
+  "TEST-NIKHIL-9284X": {
+    "code": "TEST-NIKHIL-9284X",
+    "type": "fixed_price",
+    "finalPriceINR": 1,
+    "maxUses": 100,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-24T16:00:00.000Z",
+    "description": "Nikhil Private Test Pass - Flat ₹1"
+  },
+  "SAVE100": {
+    "code": "SAVE100",
+    "type": "flat",
+    "discountAmount": 100,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-28T05:30:00.000Z",
+    "description": "Secret Flat ₹100 OFF (₹299 -> ₹199)"
+  },
+  "VIP100": {
+    "code": "VIP100",
+    "type": "flat",
+    "discountAmount": 100,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-28T05:30:00.000Z",
+    "description": "Secret VIP Deal — Flat ₹100 OFF (₹299 -> ₹199)"
+  },
+  "RONAK100": {
+    "code": "RONAK100",
+    "type": "flat",
+    "discountAmount": 100,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-27T13:31:17.196Z",
+    "description": "Secret Ronak Deal — Flat ₹100 OFF (₹299 -> ₹199)"
+  },
+  "SPECIAL150": {
+    "code": "SPECIAL150",
+    "type": "flat",
+    "discountAmount": 150,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-28T05:30:00.000Z",
+    "description": "Secret Special Deal — Flat ₹150 OFF (₹299 -> ₹149)"
+  },
+  "FREELANCER100": {
+    "code": "FREELANCER100",
+    "type": "flat",
+    "discountAmount": 100,
+    "minOrderAmount": 299,
+    "allowedBundleTypes": ["mega_1000"],
+    "maxUses": null,
+    "timesUsed": 0,
+    "usedBy": [],
+    "createdAt": "2026-10-28T05:30:00.000Z",
+    "description": "Secret Freelancer Deal — Flat ₹100 OFF (₹299 -> ₹199)"
   }
 }
