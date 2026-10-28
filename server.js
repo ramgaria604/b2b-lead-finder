@@ -1069,10 +1069,19 @@ async function buildPdfBuffer(searchData, baseFilename) {
         const waLink = lead.whatsappUrl || (rawDigits ? `https://wa.me/${rawDigits}` : '');
         doc.fontSize(11).fillColor('#0F172A').text(`${i + 1}. ${lead.name}`);
         doc.fontSize(9).fillColor('#D97706').text(`   Category: ${lead.category}  |  Rating: ${lead.rating}/5.0 (${lead.reviewsCount} reviews)`);
-        doc.fontSize(9).fillColor('#059669').text(`   Direct WhatsApp: ${lead.phone}  |  Tap to Chat: ${waLink}`);
-        doc.fontSize(9).fillColor('#1E293B').text(`   Email: ${lead.email}`);
-        doc.fontSize(9).fillColor('#4338CA').text(`   Website: ${lead.website}`);
-        doc.fontSize(8).fillColor('#64748B').text(`   Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
+        if (waLink) {
+          doc.fontSize(10).fillColor('#059669').text(`   💬 Tap to Chat on WhatsApp: ${lead.phone}`, { link: waLink, underline: true });
+        } else {
+          doc.fontSize(9).fillColor('#059669').text(`   Direct WhatsApp: ${lead.phone}`);
+        }
+        if (lead.email) {
+          doc.fontSize(9).fillColor('#1E293B').text(`   ✉️ Email: ${lead.email}`, { link: `mailto:${lead.email}` });
+        }
+        if (lead.website) {
+          const webUrl = lead.website.startsWith('http') ? lead.website : `https://${lead.website}`;
+          doc.fontSize(9).fillColor('#4338CA').text(`   🌐 Website: ${lead.website}`, { link: webUrl, underline: true });
+        }
+        doc.fontSize(8).fillColor('#64748B').text(`   📍 Location: ${lead.address}, ${lead.city || searchData.city}, ${lead.country || searchData.country || 'Global'}`);
         doc.moveDown(0.8);
       });
 
