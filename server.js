@@ -1287,24 +1287,4 @@ app.get(['/api/download-sample-pdf', '/api/download-sample-xlsx', '/api/download
 app.listen(PORT, () => {
   console.log(`🚀 Global B2B Lead Finder Server is running on http://localhost:${PORT}`);
   console.log(`💳 Razorpay Mode: ${isRealRazorpay ? 'LIVE ACTIVE' : 'SANDBOX / TEST MODE'}`);
-
-  // Anti-Sleep Keepalive System for Render (Runs every 10 mins to keep container 24/7 warm)
-  const PING_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes (Render sleeps at 15 mins)
-  const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://b2b-lead-finder-1.onrender.com';
-
-  console.log(`⏰ Anti-Sleep Keepalive initialized for ${APP_URL} (Pinging every 10 mins)`);
-
-  setInterval(async () => {
-    try {
-      const pingUrl = `${APP_URL}/api/ping`;
-      const response = await fetch(pingUrl, {
-        headers: { 'User-Agent': 'LeadPulse-KeepAlive/1.0' }
-      });
-      if (response.ok) {
-        console.log(`⚡ [KEEPALIVE PING] Server successfully kept awake at ${new Date().toLocaleTimeString()}`);
-      }
-    } catch (err) {
-      console.warn('⚠️ Keepalive ping warning:', err.message);
-    }
-  }, PING_INTERVAL_MS);
 });
